@@ -14,7 +14,8 @@
 #include "boost/variant.hpp"
 
 #include "modules/commons/params/params.hpp"
-#include "src/observers/nearest_observer.hpp"
+#include "src/observers/nearest_observer_new.hpp"
+//#include "src/observers/nn_observer.hpp"
 #include "src/commons/spaces.hpp"
 
 PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
@@ -22,9 +23,12 @@ PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
 namespace py = pybind11;
 using modules::commons::ParamsPtr;
 using observers::NearestObserver;
+//using observers::StateObserver;
+//using observers::NearestStateObserver;
 using spaces::Box;
 using spaces::Matrix_t;
 
+//old observer*
 void python_observers(py::module m) {
   py::class_<NearestObserver,
               std::shared_ptr<NearestObserver>>(m, "NearestObserver")
@@ -34,6 +38,17 @@ void python_observers(py::module m) {
     .def_property_readonly(
       "observation_space", &NearestObserver::ObservationSpace);
 }
+
+
+/*
+void python_observers(py::module m) {
+  py::class_<NearestStateObserver, std::shared_ptr<NearestStateObserver>>(m, "NearestStateObserver")
+    .def(py::init<ParamsPtr>())
+    .def("observe", &NearestStateObserver::observe)
+    .def("reset", &NearestStateObserver::Reset)
+    .def_property_readonly(
+      "observation_space", &NearestStateObserver::ObservationSpace);
+}*/
 
 void python_evaluators(py::module m) {
   // py::class_<World, std::shared_ptr<World>>(m, "NearestObserver")
@@ -60,3 +75,4 @@ PYBIND11_MODULE(bark_ml, m) {
   python_spaces(
     m.def_submodule("spaces", "c++ spaces"));
 }
+

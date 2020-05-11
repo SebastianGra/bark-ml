@@ -33,8 +33,8 @@ from configurations.base_configuration import BaseConfiguration
 
 # configuration specific evaluator
 from configurations.highway.custom_evaluator import CustomEvaluator
-# from bark_ml.observers import NearestObserver
-
+from bark_ml.observers import NearestObserver
+#from bark_ml.observers import NearestStateObserver
 
 class HighwayConfiguration(BaseConfiguration):
   """Hermetic and reproducible configuration class
@@ -57,8 +57,9 @@ class HighwayConfiguration(BaseConfiguration):
     # self._scenario_generator = \
     #   DeterministicScenarioGeneration(num_scenarios=100,
     #                                   params=self._params)
-    # self._observer = NearestObserver(self._params)
-    self._observer = ClosestAgentsObserver(self._params)
+    #self._observer = NearestObserver(self._params)
+    #self._observer = ClosestAgentsObserver(self._params)
+    self._observer = NearestStateObserver(self._params)
 
     self._behavior_model = DynamicModel(params=self._params)
     self._evaluator = CustomEvaluator(params=self._params)
@@ -82,7 +83,7 @@ class HighwayConfiguration(BaseConfiguration):
     self._runtime = RuntimeRL(action_wrapper=self._behavior_model,
                               observer=self._observer,
                               evaluator=self._evaluator,
-                              step_time=0.2,
+                              step_time=0.05,
                               viewer=self._viewer,
                               scenario_generator=self._scenario_generator)
     tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(self._runtime))

@@ -2,7 +2,7 @@ import os
 import matplotlib as mpl
 if os.environ.get('DISPLAY') == ':0':
   print('No display found. Using non-interactive Agg backend')
-  mpl.use('Agg')
+  mpl.use('TkAgg')
 
 from absl import app
 from absl import flags
@@ -44,8 +44,8 @@ def run_configuration(argv):
   if FLAGS.mode == 'train':
     configuration.train()
   elif FLAGS.mode == 'visualize':
-    configuration.visualize(5)
-    configuration._viewer.export_video("/home/hart/Dokumente/2020/bark-ml/configurations/highway/video/lane_merge")
+    configuration.visualize(20)
+    #configuration._viewer.export_video("/home/hart/Dokumente/2020/bark-ml/configurations/highway/video/lane_merge")
   elif FLAGS.mode == 'evaluate':
     configuration.evaluate()
 
