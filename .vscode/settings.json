@@ -1,4 +1,5 @@
 {
+  "python.pythonPath": "./python/venv/bin/python",
   "files.associations": {
     "memory": "cpp",
     "vector": "cpp",

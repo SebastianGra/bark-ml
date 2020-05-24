@@ -64,7 +64,7 @@ py_test(
 cc_binary(
   name = "observer_tests",
   srcs = [
-    "observer_tests.cc",
+    "observer_tests_new.cc",
   ],
   copts = ["-Iexternal/gtest/include"],
   deps = [

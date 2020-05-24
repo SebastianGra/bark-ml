@@ -40,7 +40,7 @@ using State = Eigen::Matrix<float, Eigen::Dynamic, 1>;
 
 class StateObserver{
 public:
-    StateObserver(); //default constructor
+    StateObserver():state_size_(){} //default constructor
     StateObserver(const ParamsPtr& params); //params_(params),state_size_() {};
    
     //State _select_state_by_index(const State, StateDefinition);
@@ -73,6 +73,7 @@ StateObserver::StateObserver(const ParamsPtr& params):params_(params),state_size
 
 class NearestStateObserver : public StateObserver{ //Vererbt von Klasse StateObserver
 public:
+    NearestStateObserver() : StateObserver(params_){};
     NearestStateObserver(const ParamsPtr& params_);        
     ObservedState observe (const ObservedWorldPtr& world);
     int _len_state(State state_);
@@ -82,7 +83,7 @@ public:
     Box<float> ObservationSpace() const; 
 
 private:
-    StateObserver StateObserver_;
+    //StateObserver StateObserver_;
     StateDefinition state_definition_;
     State ego_state_; //Methode GetCurrentState nur für Point2D (X,Y Pos), s. agent.hpp/
     ObservedWorldPtr ego_observed_world_;
@@ -107,7 +108,7 @@ ObservedState NearestStateObserver::observe(const ObservedWorldPtr& world){
     std::shared_ptr<const Agent> ego_agent_= world->GetEgoAgent(); //Datatype std::shared_ptr??
 
     ego_observed_world_ = world;   
-    num_other_agents_ = sizeof(ego_observed_world_->GetOtherAgents());
+    num_other_agents_ = sizeof(ego_observed_world_->GetOtherAgents())/sizeof((ego_observed_world_->GetOtherAgents())[0]);
     ego_state_ = ego_agent_->GetCurrentState();
 
     std::vector<int> nearest_agent_ids; // <- find before
@@ -115,11 +116,11 @@ ObservedState NearestStateObserver::observe(const ObservedWorldPtr& world){
     // find near agents (n)
     const Point2d ego_pos_ = ego_agent_->GetCurrentPosition(); //wird rot wenn in private
     AgentMap nearest_agents = world->GetNearestAgents(ego_pos_, num_other_agents_);
-    int i = 0; //init
+    
     //loop over nearest agents to get their IDs
     uint current_agent_idx = 0;
-    for (const auto& agent : nearest_agents) {
-        nearest_agent_ids[current_agent_idx] = agent.first; //->GetAgentId(); //second oder first?
+    for (const auto& agent : nearest_agents) {        
+        nearest_agent_ids.push_back(agent.second->GetAgentId()); //agent.first alternativ?
         current_agent_idx++;
     }
 
@@ -157,6 +158,7 @@ ObservedState NearestStateObserver::observe(const ObservedWorldPtr& world){
         concatenated_state.block(agent_idx, state_position_idx, 1, 1) = ego_state_normalized.block(state_position_idx, )
         //vector_pos_idx++;
     }*/
+    
     concatenated_state.block(agent_idx*state_size_, 0, 1, state_size_) = ego_state_normalized;
     agent_idx++;
 
@@ -176,7 +178,7 @@ ObservedState NearestStateObserver::observe(const ObservedWorldPtr& world){
 }
 
 int NearestStateObserver::_len_state(State state_){
-    return sizeof(state_);
+    return sizeof(state_)/sizeof(state_[0]);
 }
 
 State NearestStateObserver::_norm(State state_){

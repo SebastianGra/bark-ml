@@ -28,12 +28,12 @@ using observers::NearestObserver;
 using spaces::Box;
 using spaces::Matrix_t;
 
-//old observer*
+
 void python_observers(py::module m) {
   py::class_<NearestObserver,
               std::shared_ptr<NearestObserver>>(m, "NearestObserver")
     .def(py::init<ParamsPtr>())
-    .def("observe", &NearestObserver::Observe)
+    .def("observe", &NearestObserver::observe)
     .def("reset", &NearestObserver::Reset)
     .def_property_readonly(
       "observation_space", &NearestObserver::ObservationSpace);
@@ -48,7 +48,8 @@ void python_observers(py::module m) {
     .def("reset", &NearestStateObserver::Reset)
     .def_property_readonly(
       "observation_space", &NearestStateObserver::ObservationSpace);
-}*/
+}
+*/
 
 void python_evaluators(py::module m) {
   // py::class_<World, std::shared_ptr<World>>(m, "NearestObserver")
