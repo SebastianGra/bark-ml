@@ -72,7 +72,7 @@ class HighwayConfiguration(BaseConfiguration):
     axis = plt.subplot(gs[0])
     viewer = MPViewer(
                   params=self._params,
-                  y_length = 80,
+                  y_length = 150,
                   enforce_y_length=True,
                   enforce_x_length=False,
                   follow_agent_id=True,
@@ -82,7 +82,7 @@ class HighwayConfiguration(BaseConfiguration):
     self._runtime = RuntimeRL(action_wrapper=self._behavior_model,
                               observer=self._observer,
                               evaluator=self._evaluator,
-                              step_time=0.2,
+                              step_time=0.07,
                               viewer=self._viewer,
                               scenario_generator=self._scenario_generator)
     tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(self._runtime))
