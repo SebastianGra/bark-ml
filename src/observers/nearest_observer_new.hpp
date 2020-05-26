@@ -13,6 +13,7 @@
 #include <map>
 #include <functional>
 #include <Eigen/Dense>
+#include <boost/geometry.hpp>
 
 #include "modules/commons/params/params.hpp"
 #include "modules/world/world.hpp"
@@ -47,25 +48,38 @@ class NearestObserver {
   public:
     explicit NearestObserver(const ParamsPtr& params) :
       params_(params),
-      state_size_(4) {
+      state_size_(4) {  //state size 4 fixed (X_Pos, Y_Pos, Theta, Vel)
         nearest_agent_num_ = params_->GetInt("ML::Observer::n_nearest_agents", "Nearest agents number", 4);
         min_theta_ = params_->GetReal("ML::Observer::min_theta", "", -3.14);  //[rad]
         max_theta_ = params_->GetReal("ML::Observer::max_theta", "", 3.14);   //[rad]
         min_vel_ = params_->GetReal("ML::Observer::min_vel", "", 0.0);  //[m/s]
         max_vel_ = params_->GetReal("ML::Observer::max_vel", "", 25.0); //[m/s]
         max_dist_ = params_->GetReal("ML::Observer::max_dist", "", 75); //[m]
+        normalization_enabled = params_->GetBool("ML::Observer::normalization_enabled", "", true);
+        distance_method_ = params_->GetInt("ML::Observer::distance_method", "Nearest agents number", 2); //1=L1; 2=L2
         observation_len_ = nearest_agent_num_ * state_size_;
   }
 
-  ObservedState TransformState(const State& state) const{
+  ObservedState TransformState(const State& state) const{    
     ObservedState ret_state(1, state_size_);
-    ret_state <<
+    if (normalization_enabled == true){
+      ret_state <<
       Norm<double>(state(StateDefinition::X_POSITION), world_x_range[0], world_x_range[1]),
       Norm<double>(state(StateDefinition::Y_POSITION), world_x_range[0], world_x_range[1]),
       Norm<double>(state(StateDefinition::THETA_POSITION), min_theta_, max_theta_),
       Norm<double>(state(StateDefinition::VEL_POSITION), min_vel_, max_vel_);
-      //std::cout<<"ret_state: "<<ret_state<<std::endl;
-    return ret_state;
+      //std::cout<<"ret_state: "<<ret_state<<std::endl; 
+      return ret_state;      
+    }
+    else{
+      ret_state <<
+      state(StateDefinition::X_POSITION),
+      state(StateDefinition::Y_POSITION),
+      state(StateDefinition::THETA_POSITION),
+      state(StateDefinition::VEL_POSITION);
+      //std::cout<<"state: "<<ret_state<<std::endl; 
+      return ret_state;
+    }   
   }
 
   ObservedState observe(const ObservedWorldPtr& world) const {
@@ -82,8 +96,7 @@ class NearestObserver {
     std::map<float, AgentPtr, std::less<float>> distance_agent_map;
     for (const auto& agent : nearest_agents) {
       const auto& agent_state = agent.second->GetCurrentPosition();
-      float distance = Distance(ego_pos, agent_state);
-            
+      float distance = Distance(ego_pos, agent_state); //uses L2 Distance    
       if (distance < max_dist_) {   //remove far agents
         distance_agent_map[distance] = agent.second;
         
@@ -123,8 +136,13 @@ class NearestObserver {
         #endif
       }
     }
-    // state(0, 0) = Norm<float>(0., min_lon_, max_lon_);
     return state;
+  }
+
+  float L1_Distance(const Point2d &p1, const Point2d &p2){
+    float dx = boost::geometry::get<0>(p1) - boost::geometry::get<0>(p2);
+    float dy = boost::geometry::get<1>(p1) - boost::geometry::get<1>(p2);
+    return abs(dx + dy);
   }
 
   WorldPtr Reset(const WorldPtr& world,
@@ -143,9 +161,11 @@ class NearestObserver {
   
   private:
     ParamsPtr params_;
+    bool normalization_enabled;
     const int state_size_;
     int nearest_agent_num_;
     int observation_len_;
+    int distance_method_;
     float min_theta_, max_theta_, min_vel_, max_vel_, max_dist_;
     float world_x_range [2] = {-10000, 10000};
     float world_y_range [2] = {-10000, 10000};   
