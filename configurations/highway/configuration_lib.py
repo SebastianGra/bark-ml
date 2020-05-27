@@ -73,7 +73,7 @@ class HighwayConfiguration(BaseConfiguration):
     axis = plt.subplot(gs[0])
     viewer = MPViewer(
                   params=self._params,
-                  y_length = 80,
+                  y_length = 150,
                   enforce_y_length=True,
                   enforce_x_length=False,
                   follow_agent_id=True,

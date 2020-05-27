@@ -42,7 +42,7 @@ using ObservedState = Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>;
 using modules::commons::transformation::FrenetPosition;
 using State = Eigen::Matrix<float, Eigen::Dynamic, 1>;
 
-#define terminal_output_enabled false
+#define terminal_output_enabled true
 
 class NearestObserver {
   public:
@@ -56,8 +56,8 @@ class NearestObserver {
         max_vel_ = params_->GetReal("ML::Observer::max_vel", "", 25.0); //[m/s]
         max_dist_ = params_->GetReal("ML::Observer::max_dist", "", 75); //[m]
         normalization_enabled = params_->GetBool("ML::Observer::normalization_enabled", "", true);
-        distance_method_ = params_->GetInt("ML::Observer::distance_method", "Nearest agents number", 2); //1=L1; 2=L2
-        observation_len_ = nearest_agent_num_ * state_size_;
+        distance_method_ = params_->GetInt("ML::Observer::distance_method", "Nearest agents number", 1); //1=L1; 2=L2(default)
+        observation_len_ = nearest_agent_num_ * state_size_;          
   }
 
   ObservedState TransformState(const State& state) const{    
@@ -96,7 +96,13 @@ class NearestObserver {
     std::map<float, AgentPtr, std::less<float>> distance_agent_map;
     for (const auto& agent : nearest_agents) {
       const auto& agent_state = agent.second->GetCurrentPosition();
-      float distance = Distance(ego_pos, agent_state); //uses L2 Distance    
+      float distance = 0; //init  
+      if (distance_method_ == 1){
+        distance = L1_Distance(ego_pos, agent_state); //uses L1 Distance 
+      }
+      else{
+        distance = Distance(ego_pos, agent_state); //uses L2 Distance
+      }         
       if (distance < max_dist_) {   //remove far agents
         distance_agent_map[distance] = agent.second;
         
@@ -139,10 +145,10 @@ class NearestObserver {
     return state;
   }
 
-  float L1_Distance(const Point2d &p1, const Point2d &p2){
+  float L1_Distance (const Point2d &p1, const Point2d &p2) const {
     float dx = boost::geometry::get<0>(p1) - boost::geometry::get<0>(p2);
     float dy = boost::geometry::get<1>(p1) - boost::geometry::get<1>(p2);
-    return abs(dx + dy);
+    return (abs(dx) + abs(dy));
   }
 
   WorldPtr Reset(const WorldPtr& world,
