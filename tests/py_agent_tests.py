@@ -22,9 +22,11 @@ from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from src.rl_runtime import RuntimeRL
 from src.observers.nearest_state_observer import ClosestAgentsObserver
 from src.wrappers.dynamic_model import DynamicModel
+from src.wrappers.motion_primitives import MotionPrimitives
 from src.wrappers.tfa_wrapper import TFAWrapper
 from src.evaluators.goal_reached import GoalReached
-from src.agents.sac_agent import SACAgent
+#from src.agents.sac_agent import SACAgent
+from src.agents.cdqn_agent import CDQNAgent
 
 class PyAgentTests(unittest.TestCase):
   def test_agent(self):
@@ -37,7 +39,8 @@ class PyAgentTests(unittest.TestCase):
       random_seed=0,
       params=params)
     state_observer = ClosestAgentsObserver(params=params)
-    action_wrapper = DynamicModel(params=params)
+    #action_wrapper = DynamicModel(params=params)
+    action_wrapper = MotionPrimitives(params=params)
     evaluator = GoalReached(params=params)
     viewer = MPViewer(params=params,
                       x_range=[-30,30],
@@ -52,14 +55,14 @@ class PyAgentTests(unittest.TestCase):
                           scenario_generator=scenario_generation)
 
     tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(runtimerl))
-    sac_agent = SACAgent(tfa_env,
+    cdqn_agent = CDQNAgent(tfa_env,
                          params=params)
-    self.assertEqual(sac_agent._agent.name, "sac_agent")
-    sac_agent.reset()
+    self.assertEqual(cdqn_agent._agent.name, "dqn_agent")
+    cdqn_agent.reset()
     
     # TODO(@hart): does not work because of read-only file-system
     # sac_agent.save()
-    sac_agent.load()
+    cdqn_agent.load()
 
 
 if __name__ == '__main__':

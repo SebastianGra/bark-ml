@@ -20,9 +20,11 @@ from modules.runtime.viewer.matplotlib_viewer import MPViewer
 from src.rl_runtime import RuntimeRL
 from src.observers.nearest_state_observer import ClosestAgentsObserver
 from src.wrappers.dynamic_model import DynamicModel
+from src.wrappers.motion_primitives import MotionPrimitives
 from src.wrappers.tfa_wrapper import TFAWrapper
 from src.evaluators.goal_reached import GoalReached
 from src.agents.sac_agent import SACAgent
+from src.agents.cdqn_agent import CDQNAgent
 from src.runners.tfa_runner import TFARunner
 
 tf.compat.v1.enable_v2_behavior()
@@ -38,7 +40,8 @@ class PyRunnerTests(unittest.TestCase):
                                                           random_seed=0,
                                                           params=params)
     state_observer = ClosestAgentsObserver(params=params)
-    action_wrapper = DynamicModel(params=params)
+    #action_wrapper = DynamicModel(params=params)
+    action_wrapper = MotionPrimitives(params=params)
     evaluator = GoalReached(params=params)
     viewer = MPViewer(params=params,
                       x_range=[-30,30],
@@ -52,10 +55,10 @@ class PyRunnerTests(unittest.TestCase):
                           scenario_generator=scenario_generation,
                           render=False)
     tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(runtimerl))
-    sac_agent = SACAgent(tfa_env,
-                         params=params)
+    cdqn_agent = CDQNAgent(tfa_env,
+                           params=params)
     tfa_runner = TFARunner(tfa_env,
-                           sac_agent,
+                           cdqn_agent,
                            params=params,
                            unwrapped_runtime=runtimerl)
     tfa_runner.collect_initial_episodes()

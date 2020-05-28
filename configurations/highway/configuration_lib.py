@@ -24,11 +24,16 @@ from src.rl_runtime import RuntimeRL
 from src.observers.nearest_state_observer import ClosestAgentsObserver
 from src.wrappers.dynamic_model import DynamicModel
 from src.wrappers.tfa_wrapper import TFAWrapper
+from src.wrappers.motion_primitives import MotionPrimitives
 from src.evaluators.goal_reached import GoalReached
 from src.agents.sac_agent import SACAgent
 from src.agents.ppo_agent import PPOAgent
+from src.agents.cdqn_agent import CDQNAgent
+from src.agents.dqn_agent import DQNAgent
 from src.runners.sac_runner import SACRunner
 from src.runners.ppo_runner import PPORunner
+from src.runners.cdqn_runner import CDQNRunner
+from src.runners.dqn_runner import DQNRunner
 from configurations.base_configuration import BaseConfiguration
 
 # configuration specific evaluator
@@ -61,7 +66,11 @@ class HighwayConfiguration(BaseConfiguration):
     #self._observer = ClosestAgentsObserver(self._params)
     #self._observer = NearestStateObserver(self._params)
 
-    self._behavior_model = DynamicModel(params=self._params)
+    # USE THIS IF THE ACTION SPACE IS DISCRETE (WITH DQN-Agent)
+    self._behavior_model = MotionPrimitives(params=self._params)
+    # USE THIS IF THE ACTION SPACE IS CONTINUOUS (WITH SAC-Agent)
+    # self._behavior_model = DynamicModel(params=self._params)
+
     self._evaluator = CustomEvaluator(params=self._params)
     sim_step_time = 0.2
     real_time_factor = 5
@@ -93,9 +102,14 @@ class HighwayConfiguration(BaseConfiguration):
     #                          eval_tf_env,
     #                          self._agent,
     #                          params=self._params,
+    #                          unwrapped_runtime=self._runtime)                          
+    # self._agent = SACAgent(tfa_env, params=self._params)
+    # self._runner = SACRunner(tfa_env,
+    #                          self._agent,
+    #                          params=self._params,
     #                          unwrapped_runtime=self._runtime)
-    self._agent = SACAgent(tfa_env, params=self._params)
-    self._runner = SACRunner(tfa_env,
-                             self._agent,
-                             params=self._params,
-                             unwrapped_runtime=self._runtime)
+    self._agent = CDQNAgent(tfa_env, params=self._params)
+    self._runner = CDQNRunner(tfa_env,
+                              self._agent,
+                              params=self._params,
+                              unwrapped_runtime=self._runtime)   

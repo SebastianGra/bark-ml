@@ -2,6 +2,8 @@ py_library(
     name = "agents",
     srcs = ["base_agent.py",
             "sac_agent.py",
+            "cdqn_agent.py",
+            "dqn_agent.py",
             "td3_agent.py",
             "ppo_agent.py",
             "tfa_agent.py"],

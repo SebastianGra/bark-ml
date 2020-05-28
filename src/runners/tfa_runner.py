@@ -2,6 +2,7 @@ import sys
 import logging
 import time
 import tensorflow as tf
+import numpy as np
 tf.compat.v1.enable_v2_behavior()
 
 from tf_agents.drivers import dynamic_step_driver
@@ -39,8 +40,11 @@ class TFARunner(BaseRunner):
       tf_metrics.AverageEpisodeLengthMetric(
         buffer_size=self._params["ML"]["Runner"]["evaluation_steps"])
     ]
+    self._agent = agent
     self._summary_writer = None
+    self._params = params
     self._unwrapped_runtime = unwrapped_runtime
+    self._runtime = runtime
     self.get_initial_collection_driver()
     self.get_collection_driver()
 
@@ -128,12 +132,13 @@ class TFARunner(BaseRunner):
     # Ticket (https://github.com/tensorflow/agents/issues/59) recommends
     # to do the rendering in the original environment
     if self._unwrapped_runtime is not None:
+      self._agent._training = False
       for _ in range(0, num_episodes):
         state = self._unwrapped_runtime.reset()
         is_terminal = False
         while not is_terminal:
           print(state)
-          action_step = self._agent._eval_policy.action(ts.transition(state, reward=0.0, discount=1.0))
+          action_step = self._agent._eval_policy.action(ts.transition(np.array([state]), reward=0.0, discount=1.0))
           print(action_step)
           # TODO(@hart); make generic for multi agent planning
           state, reward, is_terminal, _ = self._unwrapped_runtime.step(action_step.action.numpy())
