@@ -14,7 +14,7 @@
 #include "boost/variant.hpp"
 
 #include "modules/commons/params/params.hpp"
-#include "src/observers/nearest_observer.hpp"
+#include "src/observers/nearest_observer_new.hpp"
 #include "src/commons/spaces.hpp"
 
 PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
@@ -29,7 +29,7 @@ void python_observers(py::module m) {
   py::class_<NearestObserver,
               std::shared_ptr<NearestObserver>>(m, "NearestObserver")
     .def(py::init<ParamsPtr>())
-    .def("observe", &NearestObserver::Observe)
+    .def("observe", &NearestObserver::observe)
     .def("reset", &NearestObserver::Reset)
     .def_property_readonly(
       "observation_space", &NearestObserver::ObservationSpace);

@@ -8,7 +8,7 @@
 #include "modules/commons/params/params.hpp"
 #include "modules/geometry/geometry.hpp"
 #include "modules/commons/params/default_params.hpp"
-#include "src/observers/nearest_observer.hpp"
+#include "src/observers/nearest_observer_new.hpp"
 #include "modules/world/tests/make_test_world.hpp"
 
 TEST(observes, nearest_observer) {
@@ -58,7 +58,7 @@ TEST(observes, nearest_observer) {
   NearestObserver observer(params);
 
   // Observe
-  ObservedState res = observer.Observe(obs_world_ptr);
+  ObservedState res = observer.observe(obs_world_ptr);
   std::cout << res << std::endl;
 
   // Reset

@@ -241,7 +241,7 @@
           "theta_range": [-3.14, 3.14],
           "normalization_enabled": true,
           "max_num_agents": 2,
-          "n_nearest_agents": 5,
+          "n_nearest_agents": 2,
           "max_vel": 30.0,
           "max_lon": 500.0,
           "max_dist": 100.0

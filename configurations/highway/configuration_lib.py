@@ -33,7 +33,7 @@ from configurations.base_configuration import BaseConfiguration
 
 # configuration specific evaluator
 from configurations.highway.custom_evaluator import CustomEvaluator
-# from bark_ml.observers import NearestObserver
+from bark_ml.observers import NearestObserver
 
 
 class HighwayConfiguration(BaseConfiguration):
@@ -57,8 +57,8 @@ class HighwayConfiguration(BaseConfiguration):
     # self._scenario_generator = \
     #   DeterministicScenarioGeneration(num_scenarios=100,
     #                                   params=self._params)
-    # self._observer = NearestObserver(self._params)
-    self._observer = ClosestAgentsObserver(self._params)
+    self._observer = NearestObserver(self._params)
+    #self._observer = ClosestAgentsObserver(self._params)
 
     self._behavior_model = DynamicModel(params=self._params)
     self._evaluator = CustomEvaluator(params=self._params)

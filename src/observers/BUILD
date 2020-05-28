@@ -12,7 +12,7 @@ py_library(
 cc_library(
   name = "nearest_observer",
   hdrs = [
-    "nearest_observer.hpp",
+    "nearest_observer_new.hpp",
   ],
   deps = [
     "@bark_project//modules/world:world",
