@@ -42,7 +42,7 @@ using ObservedState = Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>;
 using modules::commons::transformation::FrenetPosition;
 using State = Eigen::Matrix<float, Eigen::Dynamic, 1>;
 
-#define terminal_output_enabled true
+#define terminal_output_enabled false
 
 class NearestObserver {
   public:
@@ -83,6 +83,7 @@ class NearestObserver {
   }
 
   ObservedState observe(const ObservedWorldPtr& world) const {
+    //std::cout<<"num_agents: "<<nearest_agent_num_<<std::endl; 
     ObservedState state(1, observation_len_);
     state.setZero();
     
@@ -151,8 +152,7 @@ class NearestObserver {
     return (abs(dx) + abs(dy));
   }
 
-  WorldPtr Reset(const WorldPtr& world,
-    const std::vector<int>& agent_ids) {
+  WorldPtr Reset(const WorldPtr& world, const std::vector<int>& agent_ids) {
     return world;
   }
   

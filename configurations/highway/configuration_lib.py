@@ -92,7 +92,7 @@ class HighwayConfiguration(BaseConfiguration):
     self._runtime = RuntimeRL(action_wrapper=self._behavior_model,
                               observer=self._observer,
                               evaluator=self._evaluator,
-                              step_time=0.05,
+                              step_time=0.07,
                               viewer=self._viewer,
                               scenario_generator=self._scenario_generator)
     tfa_env = tf_py_environment.TFPyEnvironment(TFAWrapper(self._runtime))
