@@ -70,9 +70,9 @@ TEST(observes, observes_NearestObserver_Test0) {
 
 }
 
-TEST(observers, observes_NearestObserver_Test1){
+TEST(observers, test_normalization){
   auto params = std::make_shared<DefaultParams>();
-  
+   
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
   BehaviorModelPtr beh_model_const(new BehaviorConstantVelocity(params));
@@ -87,7 +87,15 @@ TEST(observers, observes_NearestObserver_Test1){
 
   //initialize agent states:
   //Time[s], X_Pos[m], Y_Pos[m], Theata[rad], Vel[m/s]
+  /*
   init_state0 << 0.0, 0.0, 0.0, 0.0, 5.0;
+  init_state1 << 0.0, 10.0, 20.0, -1.5708, 5.0;
+  init_state2 << 0.0, -10, 5, 1.5708, 10;       //90deg rotated, would crash ego agent
+  init_state3 << 0.0, 0.02, -9999.95, 0.0, 5.0; //check computational limits
+  init_state4 << 0.0, 10000, 10000, 0.0, 5.0;   //add to verify that oberver only uses defined maximum number of agents
+  */
+
+  init_state0 << 0.0, 10, -10, 0.1, 5.0;
   init_state1 << 0.0, 10.0, 20.0, -1.5708, 5.0;
   init_state2 << 0.0, -10, 5, 1.5708, 10;       //90deg rotated, would crash ego agent
   init_state3 << 0.0, 0.02, -9999.95, 0.0, 5.0; //check computational limits
@@ -110,19 +118,37 @@ TEST(observers, observes_NearestObserver_Test1){
   world->UpdateAgentRTree();
   WorldPtr world1 = world->Clone();
 
-
   ObservedWorld observed_world1(world1, world1->GetAgents().begin()->second->GetAgentId());
-  ObservedWorldPtr obs_world_ptr1 = std::make_shared<ObservedWorld>(observed_world1);
+  ObservedWorldPtr obs_world_ptr1 = std::make_shared<ObservedWorld>(observed_world1); 
 
   //create instance of Observer and pass observed world
   NearestObserver TestObserver1(params);
   ObservedState res = TestObserver1.observe(obs_world_ptr1);
   //std::cout << res << std::endl;
 
+  float obs_X_pos_agent0 = res.coeff(0,0);
+  float obs_Y_pos_agent0 = res.coeff(0,1);
+  float obs_theta_agent0 = res.coeff(0,2);
+  float obs_vel_agent0   = res.coeff(0,3); 
+
+  float max_devation = 0.00005;
+
+  //std::cout<<"res[0]: "<<obs_vel_agent0<<std::endl; 
+  EXPECT_NEAR(obs_X_pos_agent0, 0.5005, max_devation);
+  EXPECT_NEAR(obs_Y_pos_agent0, 0.4995, max_devation);
+  EXPECT_NEAR(obs_theta_agent0, 0.5159, max_devation);
+  EXPECT_NEAR(obs_vel_agent0, 0.2, max_devation);
+
   // Reset
   std::vector<int> agent_ids1{0};
-  TestObserver1.Reset(world, agent_ids1);  
+  TestObserver1.Reset(world, agent_ids1);
 }
+
+
+
+
+
+
 
 
 

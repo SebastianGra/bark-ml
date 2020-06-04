@@ -42,7 +42,7 @@ using ObservedState = Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>;
 using modules::commons::transformation::FrenetPosition;
 using State = Eigen::Matrix<float, Eigen::Dynamic, 1>;
 
-#define terminal_output_enabled false
+#define terminal_output_enabled flase
 
 class NearestObserver {
   public:
@@ -50,17 +50,17 @@ class NearestObserver {
       params_(params),
       state_size_(4) {  //state size 4 fixed (X_Pos, Y_Pos, Theta, Vel)
         nearest_agent_num_ = params_->GetInt("ML::Observer::n_nearest_agents", "Nearest agents number", 4);
-        min_theta_ = params_->GetReal("ML::Observer::min_theta", "", -3.14);  //[rad]
-        max_theta_ = params_->GetReal("ML::Observer::max_theta", "", 3.14);   //[rad]
+        min_theta_ = params_->GetReal("ML::Observer::min_theta", "", -3.14159);  //[rad]
+        max_theta_ = params_->GetReal("ML::Observer::max_theta", "", 3.14159);   //[rad]
         min_vel_ = params_->GetReal("ML::Observer::min_vel", "", 0.0);  //[m/s]
         max_vel_ = params_->GetReal("ML::Observer::max_vel", "", 25.0); //[m/s]
         max_dist_ = params_->GetReal("ML::Observer::max_dist", "", 75); //[m]
         normalization_enabled = params_->GetBool("ML::Observer::normalization_enabled", "", true);
-        distance_method_ = params_->GetInt("ML::Observer::distance_method", "Nearest agents number", 1); //1=L1; 2=L2(default)
+        distance_method_ = params_->GetInt("ML::Observer::distance_method", "Nearest agents number", 2); //1=L1; 2=L2(default)
         observation_len_ = nearest_agent_num_ * state_size_;          
   }
 
-  ObservedState TransformState(const State& state) const{    
+  ObservedState NormalizeState(const State& state) const{    
     ObservedState ret_state(1, state_size_);
     if (normalization_enabled == true){
       ret_state <<
@@ -84,6 +84,7 @@ class NearestObserver {
 
   ObservedState observe(const ObservedWorldPtr& world) const {
     //std::cout<<"num_agents: "<<nearest_agent_num_<<std::endl; 
+    //std::cout<<"max_vel: "<<max_vel_<<std::endl; 
     ObservedState state(1, observation_len_);
     state.setZero();
     
@@ -118,7 +119,7 @@ class NearestObserver {
 
     // transform ego agent state
     int col_idx = 0;
-    ObservedState obs_ego_agent_state = TransformState(ego_agent->GetCurrentState());
+    ObservedState obs_ego_agent_state = NormalizeState(ego_agent->GetCurrentState());
     //insert normaized ego state at first postion in concatenated array
     state.block(0, col_idx*state_size_, 1, state_size_) = obs_ego_agent_state;
     col_idx++;
@@ -132,7 +133,7 @@ class NearestObserver {
     // loop map of other agents (sorted by distance) 
     for (auto& agent : distance_agent_map) {
       if (agent.second->GetAgentId() != ego_agent->GetAgentId()) {
-        ObservedState other_agent_state = TransformState(agent.second->GetCurrentState());
+        ObservedState other_agent_state = NormalizeState(agent.second->GetCurrentState());
         state.block(0, col_idx*state_size_, 1, state_size_) = other_agent_state;
         col_idx++;
 
