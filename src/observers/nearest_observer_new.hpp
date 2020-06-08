@@ -42,7 +42,7 @@ using ObservedState = Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>;
 using modules::commons::transformation::FrenetPosition;
 using State = Eigen::Matrix<float, Eigen::Dynamic, 1>;
 
-#define terminal_output_enabled flase
+#define terminal_output_enabled false
 
 class NearestObserver {
   public:
