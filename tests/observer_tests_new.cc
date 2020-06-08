@@ -33,46 +33,273 @@ using namespace modules::world::tests;
 using observers::NearestObserver;
 //using observers::NearestStateObserver;
 using observers::ObservedState;
+using commons::Norm;
 
 
-TEST(observes, observes_NearestObserver_Test0) {  
-
-  Polygon polygon(
-    Pose(1, 1, 0),
-    std::vector<Point2d>{
-      Point2d(0, 0),
-      Point2d(0, 2),
-      Point2d(2, 2),
-      Point2d(2, 0),
-      Point2d(0, 0)});
-
-  std::shared_ptr<Polygon> goal_polygon(std::dynamic_pointer_cast<Polygon>(polygon.Translate(Point2d(50, -2))));  // < move the goal polygon into the driving
-                           // corridor in front of the ego vehicle
-  auto goal_definition_ptr = std::make_shared<GoalDefinitionPolygon>(*goal_polygon);
-  float ego_velocity = 15.0, rel_distance = 7.0, velocity_difference = 0.0;
-
-  ObservedWorld observed_world = make_test_observed_world(1, rel_distance, ego_velocity, velocity_difference, goal_definition_ptr);
-  WorldPtr world = make_test_world(1, rel_distance, ego_velocity, velocity_difference, goal_definition_ptr);
-  ObservedWorldPtr obs_world_ptr = std::make_shared<ObservedWorld>(observed_world);
-
-  // Observer
+TEST(observers, test_state_vector_length){
   auto params = std::make_shared<DefaultParams>();
-  //NearestStateObserver TestObserver(params); //Intance TestObersver of Constructor NearestStateObserver
-  NearestObserver TestObserver(params);
+  const int state_size_ = 4;
+  int nearest_agent_num_ = params->GetInt("ML::Observer::n_nearest_agents", "Nearest agents number", 4);
+  int res_rows;
+  int res_length; 
 
-  // Observe
-  ObservedState res = TestObserver.observe(obs_world_ptr);
+  
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  BehaviorModelPtr beh_model_const(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model_idm(new BehaviorIDMClassic(params));
+  Polygon polygon(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
+
+
+  /*test1: add only one agent; nearest_agent_num_=4*/ 
+  State init_state0(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  init_state0 << 0.0, 10, 10, 0, 5.0;
+  AgentPtr agent0(new Agent(init_state0, beh_model_idm, dyn_model, exec_model, polygon, params)); //ego
+  WorldPtr world(new World(params));
+  world->AddAgent(agent0);
+  world->UpdateAgentRTree();
+  WorldPtr world1 = world->Clone();
+
+  ObservedWorld observed_world1(world1, world1->GetAgents().begin()->second->GetAgentId());
+  ObservedWorldPtr obs_world_ptr1 = std::make_shared<ObservedWorld>(observed_world1);
+  
+  //create instance of Observer and pass observed world
+  NearestObserver TestObserver1(params);
+  ObservedState res = TestObserver1.observe(obs_world_ptr1);
+  //std::cout << res << std::endl;
+  
+  res_rows = res.rows();
+  res_length = res.cols();
+  
+  EXPECT_EQ(res_rows, 1);
+  EXPECT_EQ(res_length, nearest_agent_num_ * state_size_);
+  std::vector<int> agent_ids1{0};
+  TestObserver1.Reset(world, agent_ids1);  
+}
+
+TEST(observers, test_state_vector_length2){
+  auto params = std::make_shared<DefaultParams>();
+  const int state_size_ = 4;
+  int nearest_agent_num_ = params->GetInt("ML::Observer::n_nearest_agents", "Nearest agents number", 4);
+  int res_rows;
+  int res_length; 
+
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  BehaviorModelPtr beh_model_const(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model_idm(new BehaviorIDMClassic(params));
+  Polygon polygon(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
+
+  /*test2: add more than 4 agents; nearest_agent_num_=4*/ 
+  State init_state0(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  State init_state3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  State init_state4(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+
+  init_state0 << 0.0, 10, 10, 0, 5.0; //all agents close to ego
+  init_state1 << 0.0, 11, 12, 0, 5.0;
+  init_state2 << 0.0, -11, -12, 0, 5;       
+  init_state3 << 0.0, 12, 10, 0.0, 5.0; 
+  init_state4 << 0.0, 10, 11, 0.0, 5.0;   
+
+  AgentPtr agent0(new Agent(init_state0, beh_model_idm, dyn_model, exec_model, polygon, params)); //ego
+  AgentPtr agent1(new Agent(init_state1, beh_model_const, dyn_model, exec_model, polygon, params));
+  AgentPtr agent2(new Agent(init_state2, beh_model_const, dyn_model, exec_model, polygon, params));
+  AgentPtr agent3(new Agent(init_state3, beh_model_const, dyn_model, exec_model, polygon, params));
+  AgentPtr agent4(new Agent(init_state4, beh_model_const, dyn_model, exec_model, polygon, params));
+
+  WorldPtr world(new World(params));
+  world->AddAgent(agent0);
+  world->AddAgent(agent1);
+  world->AddAgent(agent2);
+  world->AddAgent(agent3);
+  world->AddAgent(agent4);
+  world->UpdateAgentRTree();
+  WorldPtr world1 = world->Clone();
+
+  ObservedWorld observed_world(world1, world1->GetAgents().begin()->second->GetAgentId());
+  ObservedWorldPtr obs_world_ptr = std::make_shared<ObservedWorld>(observed_world);
+  
+  //create instance of Observer and pass observed world
+  NearestObserver TestObserver2(params);
+  ObservedState res = TestObserver2.observe(obs_world_ptr);
+  //std::cout << res << std::endl;
+  
+  res_rows = res.rows();
+  res_length = res.cols();
+  
+  EXPECT_EQ(res_rows, 1);
+  EXPECT_EQ(res_length, nearest_agent_num_ * state_size_);
+  std::vector<int> agent_ids1{0};
+  TestObserver2.Reset(world, agent_ids1);
+}
+
+TEST(observers, test_max_distance){
+  auto params = std::make_shared<DefaultParams>();
+  const int state_size_ = 4;
+  int nearest_agent_num_ = params->GetInt("ML::Observer::n_nearest_agents", "Nearest agents number", 4);
+  float max_dist_ = params->GetReal("ML::Observer::max_dist", "", 75); //[m]
+  int distance_method_ = params->GetInt("ML::Observer::distance_method", "Nearest agents number", 2); //1=L1; 2=L2(default)
+
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  BehaviorModelPtr beh_model_const(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model_idm(new BehaviorIDMClassic(params));
+  Polygon polygon(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
+
+  /*test2: add more than 4 agents; nearest_agent_num_=4*/ 
+  State init_state0(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  State init_state3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  
+
+  init_state0 << 0.0, 0, 0, 0, 5.0; //all agents close to ego
+  init_state1 << 0.0, -54, -54, 0, 5.0; //L2=76.34 --> too far   
+  init_state2 << 0.0, 20, 73, 0.0, 5.0; //L2=75.69 --> too far
+  init_state3 << 0.0, 53, 53, 0, 5.0; //L2 = 74.95
+ 
+  
+  AgentPtr agent0(new Agent(init_state0, beh_model_idm, dyn_model, exec_model, polygon, params)); //ego
+  AgentPtr agent1(new Agent(init_state1, beh_model_const, dyn_model, exec_model, polygon, params));
+  AgentPtr agent2(new Agent(init_state2, beh_model_const, dyn_model, exec_model, polygon, params));
+  AgentPtr agent3(new Agent(init_state3, beh_model_const, dyn_model, exec_model, polygon, params));
+  
+  WorldPtr world(new World(params));
+  world->AddAgent(agent0);
+  world->AddAgent(agent1);
+  world->AddAgent(agent2);
+  world->AddAgent(agent3);
+  world->UpdateAgentRTree();
+  WorldPtr world1 = world->Clone();
+
+  ObservedWorld observed_world(world1, world1->GetAgents().begin()->second->GetAgentId());
+  ObservedWorldPtr obs_world_ptr = std::make_shared<ObservedWorld>(observed_world);
+  
+  //create instance of Observer and pass observed world
+  NearestObserver TestObserver3(params);
+  ObservedState res = TestObserver3.observe(obs_world_ptr);
+  //std::cout << res << std::endl;
+  
+  float obs_X_pos_agent3 = res.coeff(0,4);
+  float obs_Y_pos_agent3 = res.coeff(0,5);
+  
+  float max_devation = 0.00005;
+
+  EXPECT_NEAR(obs_X_pos_agent3, 0.50265, max_devation); //53m normalized
+  EXPECT_NEAR(obs_Y_pos_agent3, 0.50265, max_devation);
+  for(int zwerg=8; zwerg<16; zwerg++){
+    int pos = res.coeff(0,zwerg);
+    EXPECT_EQ(pos, 0);
+  };   
+  std::vector<int> agent_ids1{0};
+  TestObserver3.Reset(world, agent_ids1);
+}
+
+TEST(observers, test_state_vector_order){
+  auto params = std::make_shared<DefaultParams>();
+  const int state_size_ = 4;
+  int nearest_agent_num_ = params->GetInt("ML::Observer::n_nearest_agents", "Nearest agents number", 4);
+  float world_x_range [2] = {-10000, 10000};
+  float world_y_range [2] = {-10000, 10000};   
+  
+  ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
+  DynamicModelPtr dyn_model(new SingleTrackModel(params));
+  BehaviorModelPtr beh_model_const(new BehaviorConstantVelocity(params));
+  BehaviorModelPtr beh_model_idm(new BehaviorIDMClassic(params));
+  Polygon polygon(Pose(1.25, 1, 0), std::vector<Point2d>{Point2d(0, 0), Point2d(0, 2), Point2d(4, 2), Point2d(4, 0), Point2d(0, 0)});
+
+  /*test2: add more than 4 agents; nearest_agent_num_=4*/ 
+  State init_state0(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  State init_state1(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  State init_state2(static_cast<int>(StateDefinition::MIN_STATE_SIZE));
+  State init_state3(static_cast<int>(StateDefinition::MIN_STATE_SIZE));  
+
+  init_state0 << 0.0, 0, 0, 0, 5.0;       //ego
+  init_state1 << 0.0, -15, -15, 0, 5.0;   //3rd clostest
+  init_state2 << 0.0, 10, 0, 0.0, 5.0;    //1st closest
+  init_state3 << 0.0, 15, -5, 0.0, 10.0;  //2nd closest
+  
+  AgentPtr agent0(new Agent(init_state0, beh_model_idm, dyn_model, exec_model, polygon, params)); //ego
+  AgentPtr agent1(new Agent(init_state1, beh_model_const, dyn_model, exec_model, polygon, params));
+  AgentPtr agent2(new Agent(init_state2, beh_model_const, dyn_model, exec_model, polygon, params));
+  AgentPtr agent3(new Agent(init_state3, beh_model_const, dyn_model, exec_model, polygon, params));
+  
+  WorldPtr world(new World(params));
+  world->AddAgent(agent3);  //add in different order
+  world->AddAgent(agent2);
+  world->AddAgent(agent1);
+  world->AddAgent(agent0);
+  world->UpdateAgentRTree();
+  WorldPtr world1 = world->Clone();
+
+  ObservedWorld observed_world(world1, world1->GetAgents().begin()->second->GetAgentId());
+  ObservedWorldPtr obs_world_ptr = std::make_shared<ObservedWorld>(observed_world);
+  
+  //create instance of Observer and pass observed world
+  NearestObserver TestObserver4(params);
+  ObservedState res = TestObserver4.observe(obs_world_ptr);
   //std::cout << res << std::endl;
 
-  // Reset
-  std::vector<int> agent_ids{0};
-  TestObserver.Reset(world, agent_ids);  
+  //select here psoitions in the order how it should be according the state definition
+  float obs_X_pos_agent0 = res.coeff(0,0);
+  float obs_Y_pos_agent0 = res.coeff(0,1);
+  float obs_X_pos_agent1 = res.coeff(0,12);
+  float obs_Y_pos_agent1 = res.coeff(0,13);
+  float obs_X_pos_agent2 = res.coeff(0,4);
+  float obs_Y_pos_agent2 = res.coeff(0,5);
+  float obs_X_pos_agent3 = res.coeff(0,8);
+  float obs_Y_pos_agent3 = res.coeff(0,9);  
 
+  float calc_X_pos_agent0 = Norm<double>(init_state0(StateDefinition::X_POSITION), world_x_range[0], world_x_range[1]);
+  float calc_Y_pos_agent0 = Norm<double>(init_state0(StateDefinition::Y_POSITION), world_x_range[0], world_x_range[1]);
+  float calc_X_pos_agent1 = Norm<double>(init_state1(StateDefinition::X_POSITION), world_x_range[0], world_x_range[1]);
+  float calc_Y_pos_agent1 = Norm<double>(init_state1(StateDefinition::Y_POSITION), world_x_range[0], world_x_range[1]);
+  float calc_X_pos_agent2 = Norm<double>(init_state2(StateDefinition::X_POSITION), world_x_range[0], world_x_range[1]);
+  float calc_Y_pos_agent2 = Norm<double>(init_state2(StateDefinition::Y_POSITION), world_x_range[0], world_x_range[1]);
+  float calc_X_pos_agent3 = Norm<double>(init_state3(StateDefinition::X_POSITION), world_x_range[0], world_x_range[1]);
+  float calc_Y_pos_agent3 = Norm<double>(init_state3(StateDefinition::Y_POSITION), world_x_range[0], world_x_range[1]);
+  
+  float max_devation = 0.00005;
+
+  EXPECT_NEAR(obs_X_pos_agent0, calc_X_pos_agent0, max_devation);
+  EXPECT_NEAR(obs_Y_pos_agent0, calc_Y_pos_agent0, max_devation);
+  EXPECT_NEAR(obs_X_pos_agent1, calc_X_pos_agent1, max_devation);
+  EXPECT_NEAR(obs_Y_pos_agent1, calc_Y_pos_agent1, max_devation);
+  EXPECT_NEAR(obs_X_pos_agent2, calc_X_pos_agent2, max_devation);
+  EXPECT_NEAR(obs_Y_pos_agent2, calc_Y_pos_agent2, max_devation);
+  EXPECT_NEAR(obs_X_pos_agent3, calc_X_pos_agent3, max_devation);
+  EXPECT_NEAR(obs_Y_pos_agent3, calc_Y_pos_agent3, max_devation);
+     
+  std::vector<int> agent_ids1{0};
+  TestObserver4.Reset(world, agent_ids1);
 }
 
 TEST(observers, test_normalization){
   auto params = std::make_shared<DefaultParams>();
-   
+  const int state_size_ = 4;
+
+  bool normalization_enabled;
+  int nearest_agent_num_;
+  int observation_len_;
+  int distance_method_;
+  float min_theta_, max_theta_, min_vel_, max_vel_, max_dist_;
+  float world_x_range [2] = {-10000, 10000};
+  float world_y_range [2] = {-10000, 10000};   
+
+  nearest_agent_num_ = params->GetInt("ML::Observer::n_nearest_agents", "Nearest agents number", 4);
+  min_theta_ = params->GetReal("ML::Observer::min_theta", "", -3.14159);  //[rad]
+  max_theta_ = params->GetReal("ML::Observer::max_theta", "", 3.14159);   //[rad]
+  min_vel_ = params->GetReal("ML::Observer::min_vel", "", 0.0);  //[m/s]
+  max_vel_ = params->GetReal("ML::Observer::max_vel", "", 25.0); //[m/s]
+  max_dist_ = params->GetReal("ML::Observer::max_dist", "", 75); //[m]
+  normalization_enabled = params->GetBool("ML::Observer::normalization_enabled", "", true);
+  distance_method_ = params->GetInt("ML::Observer::distance_method", "Nearest agents number", 2); //1=L1; 2=L2(default)
+  observation_len_ = nearest_agent_num_ * state_size_;
+
+  //std::cout<<"num_agents: "<<nearest_agent_num_<<std::endl;
+
   ExecutionModelPtr exec_model(new ExecutionModelInterpolate(params));
   DynamicModelPtr dyn_model(new SingleTrackModel(params));
   BehaviorModelPtr beh_model_const(new BehaviorConstantVelocity(params));
@@ -133,7 +360,6 @@ TEST(observers, test_normalization){
 
   float max_devation = 0.00005;
 
-  //std::cout<<"res[0]: "<<obs_vel_agent0<<std::endl; 
   EXPECT_NEAR(obs_X_pos_agent0, 0.5005, max_devation);
   EXPECT_NEAR(obs_Y_pos_agent0, 0.4995, max_devation);
   EXPECT_NEAR(obs_theta_agent0, 0.5159, max_devation);
@@ -143,14 +369,6 @@ TEST(observers, test_normalization){
   std::vector<int> agent_ids1{0};
   TestObserver1.Reset(world, agent_ids1);
 }
-
-
-
-
-
-
-
-
 
 
 
