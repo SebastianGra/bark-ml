@@ -264,13 +264,13 @@
           "theta_range": [-3.14, 3.14],
           "normalization_enabled": true,
           "max_num_agents": 2,
-          "n_nearest_agents": 5,
+          "n_nearest_agents": 2,
           "min_theta":-3.14159,
           "max_theta":3.14159,
           "min_vel": 0,
           "max_vel": 30.0,
           "max_lon": 500.0,
-          "max_dist": 100.0,
+          "max_dist": 30.0,
           "distance_method": 2
         },
         "Runner": {

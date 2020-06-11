@@ -48,6 +48,10 @@ class NearestObserver {
   public:
     explicit NearestObserver(const ParamsPtr& params) :
       params_(params),
+      world_x_min_ (0.0),
+      world_x_max_ (100.0),
+      world_y_min_ (0.0),
+      world_y_max_ (100.0),
       state_size_(4) {  //state size 4 fixed (X_Pos, Y_Pos, Theta, Vel)
         nearest_agent_num_ = params_->GetInt("ML::Observer::n_nearest_agents", "Nearest agents number", 4);
         min_theta_ = params_->GetReal("ML::Observer::min_theta", "", -3.14159);  //[rad]
@@ -58,14 +62,14 @@ class NearestObserver {
         normalization_enabled = params_->GetBool("ML::Observer::normalization_enabled", "", true);
         distance_method_ = params_->GetInt("ML::Observer::distance_method", "Nearest agents number", 2); //1=L1; 2=L2(default)
         observation_len_ = nearest_agent_num_ * state_size_;          
-  }
+      }
 
   ObservedState NormalizeState(const State& state) const{    
     ObservedState ret_state(1, state_size_);
     if (normalization_enabled == true){
       ret_state <<
-      Norm<double>(state(StateDefinition::X_POSITION), world_x_range[0], world_x_range[1]),
-      Norm<double>(state(StateDefinition::Y_POSITION), world_x_range[0], world_x_range[1]),
+      Norm<double>(state(StateDefinition::X_POSITION), world_x_min_, world_x_max_),
+      Norm<double>(state(StateDefinition::Y_POSITION), world_y_min_, world_y_max_),
       Norm<double>(state(StateDefinition::THETA_POSITION), min_theta_, max_theta_),
       Norm<double>(state(StateDefinition::VEL_POSITION), min_vel_, max_vel_);
       //std::cout<<"ret_state: "<<ret_state<<std::endl; 
@@ -83,7 +87,10 @@ class NearestObserver {
   }
 
   ObservedState observe(const ObservedWorldPtr& world) const {
+    //std::cout<<"world_x_max: "<<world_x_max_<<std::endl;
+    //std::cout<<"world_x_min: "<<world_x_min_<<std::endl; 
     //std::cout<<"num_agents: "<<nearest_agent_num_<<std::endl; 
+    //std::cout<<"max_dist: "<<max_dist_<<std::endl; 
     //std::cout<<"max_vel: "<<max_vel_<<std::endl; 
     ObservedState state(1, observation_len_);
     state.setZero();
@@ -154,6 +161,13 @@ class NearestObserver {
   }
 
   WorldPtr Reset(const WorldPtr& world, const std::vector<int>& agent_ids) {
+    const auto& x_y = world->BoundingBox();
+    Point2d bb0 = x_y.first;
+    Point2d bb1 = x_y.second;
+    world_x_min_ = bb0.get<0>();
+    world_x_max_ = bb1.get<0>();
+    world_y_min_ = bb0.get<1>();
+    world_y_max_ = bb1.get<1>();
     return world;
   }
   
@@ -174,8 +188,7 @@ class NearestObserver {
     int observation_len_;
     int distance_method_;
     float min_theta_, max_theta_, min_vel_, max_vel_, max_dist_;
-    float world_x_range [2] = {-10000, 10000};
-    float world_y_range [2] = {-10000, 10000};   
+    float world_x_min_, world_x_max_, world_y_min_, world_y_max_;
 };
 
 }  // namespace observers
