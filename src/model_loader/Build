@@ -1,0 +1,11 @@
+
+
+
+cc_library(
+    name="model_loader",
+    srcs=["ModelLoader.cpp"],
+    hdrs=["ModelLoader.hpp"],
+    copts = ["-Iexternal/libtensorflow-RL-MCTS"],
+    deps= ["@libtensorflow-RL-MCTS//libtensorflow:libtensorflow"],
+    visibility = ["//visibility:public"],
+)
