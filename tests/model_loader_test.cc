@@ -1,4 +1,4 @@
-#include "tensorflow/c/c_api.h"
+#include "libtensorflow/c/c_api.h"
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
