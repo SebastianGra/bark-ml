@@ -73,12 +73,12 @@ cc_test(
 )
 
 cc_test(
-    name="model_loader",
+    name="model_loader_test",
     srcs=["model_loader_test.cc"],
     copts = ["-Iexternal/gtest/include"],
     deps=[
-        "//scr/model_loader:ModelLoader"
-        "@libtensorflow-RL-MCTS//libtensorflow:libtensorflow",
+        "//src/model_loader:ModelLoader",
+        "@libtensorflow-RL-MCTS//libtensorflow:tensorflowlib",
         "@gtest//:main",
     ],
 )

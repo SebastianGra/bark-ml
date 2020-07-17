@@ -1,4 +1,4 @@
-#include "libtensorflow/c/c_api.h"
+#include "libtensorflow/include/tensorflow/c/c_api.h"
 #include "ModelLoader.hpp"
 #include <cstdlib>
 #include <fstream>
