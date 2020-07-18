@@ -32,10 +32,31 @@ class CDQNRunner(TFARunner):
                        agent=agent,
                        params=params,
                        unwrapped_runtime=unwrapped_runtime)
+    self.runtime=runtime
+
+  #@tf.function
+  #def _inference(self, input):
+  #  q_values, _ = self.model(input)
+  #  return q_values
 
   def _train(self):
-    """Trains the agent as specified in the parameter file
-    """
+    self.model = self._agent._agent._q_network
+    print(self._agent._agent)
+    #print(np.shape(self.model()))
+        
+    #num_state_dims = np.shape(self.runtime._observation_spec)[1]
+    print(np.shape(self.runtime._observation_spec))
+
+    obs = np.array([[0.68890405, 0.07822049, 0.5780419 , 1., 0.5767162 ,
+        0.14886844, 0.65039325, 52042484]]) 
+    print(np.shape(obs))
+    self.model(obs)
+    #q_values, _ = self.model(obs)
+
+    #inference = self._inference.get_concrete_function(input=tf.TensorSpec([1, num_state_dims], tf.float32))
+    #self.model.save('./model', save_format='tf', include_optimizer=False, signatures=inference)
+    #"""Trains the agent as specified in the parameter file
+    #"""
     iterator = iter(self._agent._dataset)
     for _ in range(0, self._params["ML"]["Runner"]["number_of_collections"]):
       global_iteration = self._agent._agent._train_step_counter.numpy()

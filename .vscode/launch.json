@@ -12,7 +12,8 @@
 					"console": "integratedTerminal",
 					"env": {
 							//"PYTHONPATH": "${workspaceFolder}/bazel-bin/tests/py_bark_agent_tests.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/tests/py_bark_agent_tests.runfiles/bark_project:${workspaceFolder}/bazel-bin/tests/py_bark_agent_tests.runfiles/bark_ml"
-							"PYTHONPATH": "${workspaceFolder}/bazel-bin/configurations/highway/configuration.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/configurations/highway/configuration.runfiles/bark_project:${workspaceFolder}/bazel-bin/configurations/highway/configuration.runfiles/bark_ml"
+							"PYTHONPATH": "${workspaceFolder}/bazel-bin/configurations/highway/configuration.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/configurations/highway/configuration.runfiles/bark_project:${workspaceFolder}/bazel-bin/configurations/highway/configuration.runfiles/bark_ml:${workspaceFolder}/bazel-bin/python/bark_ml.so.runfiles/bark_ml/python"
+							//"PYTHONPATH": "${workspaceFolder}/bazel-bin/configurations/highway/configuration.runfiles/bark_project/python/:${workspaceFolder}/bazel-bin/configurations/highway/configuration.runfiles/bark_project:${workspaceFolder}/bazel-bin/configurations/highway/configuration.runfiles/bark_ml:${workspaceFolder}/bazel-bin/python/bark_ml.so"
 			 }
 			},
 			{
