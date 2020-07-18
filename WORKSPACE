@@ -52,6 +52,12 @@ git_repository(
     remote = "https://github.com/patrickhart/rules_boost",
 )
 
+git_repository(
+    name = "libtensorflow-RL-MCTS",
+    commit = "9b13b789405ad82d717fac0f1e15957510280beb",
+    remote = "https://github.com/wejdene14/libtensorflow-RL-MCTS",
+)
+
 # External dependency: Google Flags; has Bazel build already.
 http_archive(
     name = "com_github_gflags_gflags",

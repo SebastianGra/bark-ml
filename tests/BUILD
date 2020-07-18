@@ -61,15 +61,24 @@ py_test(
           "@bark_project//modules/runtime/scenario/scenario_generation:scenario_generation"],
 )
 
-cc_binary(
+cc_test(
   name = "observer_tests",
-  srcs = [
-    "observer_tests_new.cc",
-  ],
+  srcs = ["observer_tests_new.cc"],
   copts = ["-Iexternal/gtest/include"],
   deps = [
     "//src/observers:nearest_observer",
     "@bark_project//modules/world/tests:make_test_world",
     "@gtest//:main",
   ]
+)
+
+cc_test(
+    name="model_loader_test",
+    srcs=["model_loader_test.cc"],
+    copts = ["-Iexternal/gtest/include"],
+    deps=[
+        "//src/model_loader:ModelLoader",
+        "@libtensorflow-RL-MCTS//libtensorflow:tensorflowlib",
+        "@gtest//:main",
+    ],
 )
