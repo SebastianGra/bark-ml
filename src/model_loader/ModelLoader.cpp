@@ -11,7 +11,7 @@
 
 void NoOpDeallocator(void* data, size_t a, void* b) {}
 
-void ModelLoader::ModelLoader() 
+ModelLoader::ModelLoader()
     {
         //********* Read model
         TF_Graph* Graph = TF_NewGraph();
@@ -19,11 +19,11 @@ void ModelLoader::ModelLoader()
         TF_SessionOptions* SessionOpts = TF_NewSessionOptions();
         TF_Buffer* RunOpts = NULL;
         
-        char* saved_model_dir = "/Users/wejdene/Desktop/Praktikum/model/"; 
-        char* tags = "serve"; 
+        saved_model_dir = "/home/vivienne/Praktikum/model/"; 
+        char const *tags = "serve"; 
         
         int ntags = 1; 
-        TF_Session* Session = TF_LoadSessionFromSavedModel(SessionOpts, RunOpts, saved_model_dir, &tags, ntags, Graph, NULL, Status);
+        Session = TF_LoadSessionFromSavedModel(SessionOpts, RunOpts, saved_model_dir, &tags, ntags, Graph, NULL, Status);
         
         if (TF_GetCode(Status) == TF_OK) {
             std::cout << "TF_LoadSessionFromSavedModel OK\n" << std::endl;
@@ -62,12 +62,12 @@ void ModelLoader::ModelLoader()
 
 
         //********* Allocate data for inputs & outputs
-        TF_Tensor** InputValues  = (TF_Tensor**)malloc(sizeof(TF_Tensor*)*NumInputs);
-        TF_Tensor** OutputValues = (TF_Tensor**)malloc(sizeof(TF_Tensor*)*NumOutputs);
+        InputValues  = (TF_Tensor**)malloc(sizeof(TF_Tensor*)*NumInputs);
+        OutputValues = (TF_Tensor**)malloc(sizeof(TF_Tensor*)*NumOutputs);
 
     }
 
-ModelLoader::std::vector<float> Evaluator(std::vector<float> neural_network_input)
+std::vector<float> ModelLoader::Evaluator(std::vector<float> neural_network_input, int actions_number)
     {
         //std::vector<double> EvaluateModel(std::vector<double> neural_network_input) const = 0;
 
@@ -109,7 +109,8 @@ ModelLoader::std::vector<float> Evaluator(std::vector<float> neural_network_inpu
 
         
         auto values = (float*) (TF_TensorData(OutputValues[0]));
-        std::vector<float> q_values(values,values+4);
+        int n = actions_number;
+        std::vector<float> q_values(values,values+n);
 
         return q_values;
     }
