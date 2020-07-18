@@ -34,6 +34,7 @@ class SACRunner(TFARunner):
                        agent=agent,
                        params=params,
                        unwrapped_runtime=unwrapped_runtime)
+    self.runtime = runtime
 
   def train(self):
     """Wrapper that sets the summary writer.
@@ -86,9 +87,32 @@ class SACRunner(TFARunner):
               str(mean_steps),
               str(self._params["ML"]["Runner"]["evaluation_steps"])))
 
+  @tf.function
+  def _inference(self, obs):
+    actions = tf.constant([[4., 0.], [2., 0.], [-0.5, 0.], [-1., 0.]])
+    obs = tf.concat((obs, obs, obs, obs), 0)
+    q_values, _ = self.model.call((obs,actions))
+    return q_values
+
   def _train(self):
     """Trains the agent as specified in the parameter file
     """
+    self.model = self._agent._agent._critic_network_1
+
+    obs = tf.constant([[0.68890405, 0.07822049, 0.5780419 , 1., 0.5767162 ,
+        0.14886844, 0.65039325, 0.52042484, 1.  , 0.7518059 ,
+        0.3736292 , 1.]])
+    
+    print(np.shape(self.runtime._observation_spec))
+    q_values = self._inference(obs)
+
+    num_state_dims = np.shape(self.runtime._observation_spec)[0]
+
+    print(q_values)
+
+    inference = self._inference.get_concrete_function(obs=tf.TensorSpec([1, num_state_dims], tf.float32))
+    self.model.save('./data/save_model', save_format='tf', include_optimizer=False, signatures=inference)
+
     iterator = iter(self._agent._dataset)
     for _ in range(0, self._params["ML"]["Runner"]["number_of_collections"]):
       global_iteration = self._agent._agent._train_step_counter.numpy()
