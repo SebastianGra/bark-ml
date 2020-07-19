@@ -35,8 +35,8 @@ ModelLoader::ModelLoader()
 
         //********* Get input tensor
         int NumInputs = 1;
-        TF_Output* Input = (TF_Output*) malloc(sizeof(TF_Output) * NumInputs);
-        TF_Output t0 = {TF_GraphOperationByName(Graph, "serving_default_input"), 0};
+        Input = (TF_Output*) malloc(sizeof(TF_Output) * NumInputs);
+        t0 = {TF_GraphOperationByName(Graph, "serving_default_input"), 0};
 
         if(t0.oper == NULL) {
             std::cout << "ERROR: Failed TF_GraphOperationByName serving_default_input\n" << std::endl;
@@ -49,8 +49,8 @@ ModelLoader::ModelLoader()
         
         //********* Get Output tensor
         int NumOutputs = 1;
-        TF_Output* Output = (TF_Output*) malloc(sizeof(TF_Output) * NumOutputs);
-        TF_Output t2 = {TF_GraphOperationByName(Graph, "StatefulPartitionedCall"), 0};
+        Output = (TF_Output*) malloc(sizeof(TF_Output) * NumOutputs);
+        t2 = {TF_GraphOperationByName(Graph, "StatefulPartitionedCall"), 0};
         
         if(t2.oper == NULL) {
             std::cout << "ERROR: Failed TF_GraphOperationByName StatefulPartitionedCall\n" << std::endl;

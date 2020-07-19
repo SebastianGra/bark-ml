@@ -17,6 +17,7 @@ private:
     const int NumInputs = 1;
     TF_Output* Input;
     TF_Output t0;
+    TF_Output t2;
     const int NumOutputs = 1;
     TF_Output* Output;
     TF_Tensor** InputValues;
