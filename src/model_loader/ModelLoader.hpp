@@ -10,7 +10,8 @@ public:
     std::vector<float> Evaluator(std::vector<float> neural_network_input, int actions_number);
 
 private:
-    TF_Status* Status = TF_NewStatus();
+    TF_Status* Status;
+    TF_Graph* Graph;
     const char* saved_model_dir; 
     const char* tags;
     TF_Session* Session;

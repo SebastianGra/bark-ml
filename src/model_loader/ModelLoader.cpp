@@ -14,13 +14,13 @@ void NoOpDeallocator(void* data, size_t a, void* b) {}
 ModelLoader::ModelLoader()
     {
         //********* Read model
-        TF_Graph* Graph = TF_NewGraph();
-        TF_Status* Status = TF_NewStatus();
+        Graph = TF_NewGraph();
+        Status = TF_NewStatus();
         TF_SessionOptions* SessionOpts = TF_NewSessionOptions();
         TF_Buffer* RunOpts = NULL;
         
         saved_model_dir = "/home/vivienne/Praktikum/model/"; 
-        char const *tags = "serve"; 
+        tags = "serve"; 
         
         int ntags = 1; 
         Session = TF_LoadSessionFromSavedModel(SessionOpts, RunOpts, saved_model_dir, &tags, ntags, Graph, NULL, Status);
@@ -34,7 +34,7 @@ ModelLoader::ModelLoader()
     
 
         //********* Get input tensor
-        int NumInputs = 1;
+        
         Input = (TF_Output*) malloc(sizeof(TF_Output) * NumInputs);
         t0 = {TF_GraphOperationByName(Graph, "serving_default_input"), 0};
 
