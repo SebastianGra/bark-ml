@@ -57,8 +57,8 @@ class NearestObserver {
         min_theta_ = params_->GetReal("ML::Observer::min_theta", "", -3.14159);  //[rad]
         max_theta_ = params_->GetReal("ML::Observer::max_theta", "", 3.14159);   //[rad]
         min_vel_ = params_->GetReal("ML::Observer::min_vel", "", 0.0);  //[m/s]
-        max_vel_ = params_->GetReal("ML::Observer::max_vel", "", 25.0); //[m/s]
-        max_dist_ = params_->GetReal("ML::Observer::max_dist", "", 75); //[m]
+        max_vel_ = params_->GetReal("ML::Observer::max_vel", "", 30.0); //[m/s]
+        max_dist_ = params_->GetReal("ML::Observer::max_dist", "", 30.0); //[m]
         normalization_enabled = params_->GetBool("ML::Observer::normalization_enabled", "", true);
         distance_method_ = params_->GetInt("ML::Observer::distance_method", "Nearest agents number", 2); //1=L1; 2=L2(default)
         observation_len_ = nearest_agent_num_ * state_size_;          
@@ -72,7 +72,6 @@ class NearestObserver {
       Norm<double>(state(StateDefinition::Y_POSITION), world_y_min_, world_y_max_),
       Norm<double>(state(StateDefinition::THETA_POSITION), min_theta_, max_theta_),
       Norm<double>(state(StateDefinition::VEL_POSITION), min_vel_, max_vel_);
-      //std::cout<<"ret_state: "<<ret_state<<std::endl; 
       return ret_state;      
     }
     else{
@@ -81,17 +80,11 @@ class NearestObserver {
       state(StateDefinition::Y_POSITION),
       state(StateDefinition::THETA_POSITION),
       state(StateDefinition::VEL_POSITION);
-      //std::cout<<"state: "<<ret_state<<std::endl; 
       return ret_state;
     }   
   }
 
   ObservedState observe(const ObservedWorldPtr& world) const {
-    //std::cout<<"world_x_max: "<<world_x_max_<<std::endl;
-    //std::cout<<"world_x_min: "<<world_x_min_<<std::endl; 
-    //std::cout<<"num_agents: "<<nearest_agent_num_<<std::endl; 
-    //std::cout<<"max_dist: "<<max_dist_<<std::endl; 
-    //std::cout<<"max_vel: "<<max_vel_<<std::endl; 
     ObservedState state(1, observation_len_);
     state.setZero();
     
@@ -113,8 +106,7 @@ class NearestObserver {
         distance = Distance(ego_pos, agent_state); //uses L2 Distance
       }         
       if (distance < max_dist_) {   //remove far agents
-        distance_agent_map[distance] = agent.second;
-        
+        distance_agent_map[distance] = agent.second;        
         #if terminal_output_enabled==true
           auto view_state = agent.second->GetCurrentState();
           std::cout<<"agent Id: "<< agent.first << std::endl;
