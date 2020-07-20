@@ -58,10 +58,10 @@ class NearestObserver {
         max_theta_ = params_->GetReal("ML::Observer::max_theta", "", 3.14159);   //[rad]
         min_vel_ = params_->GetReal("ML::Observer::min_vel", "", 0.0);  //[m/s]
         max_vel_ = params_->GetReal("ML::Observer::max_vel", "", 30.0); //[m/s]
-        max_dist_ = params_->GetReal("ML::Observer::max_dist", "", 30.0); //[m]
+        max_dist_ = params_->GetReal("ML::Observer::max_dist", "", 50.0); //[m]
         normalization_enabled = params_->GetBool("ML::Observer::normalization_enabled", "", true);
-        distance_method_ = params_->GetInt("ML::Observer::distance_method", "Nearest agents number", 2); //1=L1; 2=L2(default)
-        observation_len_ = nearest_agent_num_ * state_size_;          
+        distance_method_ = params_->GetInt("ML::Observer::distance_method", "", 2); //1=L1; 2=L2(default)
+        observation_len_ = nearest_agent_num_ * state_size_;     
       }
 
   ObservedState NormalizeState(const State& state) const{    
