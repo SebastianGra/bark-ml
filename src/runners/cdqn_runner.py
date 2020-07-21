@@ -35,11 +35,18 @@ class CDQNRunner(TFARunner):
   
   @tf.function
   def _inference(self, input):
-      q_values, _ = self.model(input)
+      q_logits, _ = self.model.call(input)
+      q_probabilities = tf.nn.softmax(q_logits)
+      q_values = tf.reduce_sum(self._agent._agent._support * q_probabilities, axis = 1)
       return q_values
 
   def _train(self):
     self.model = self._agent._agent._q_network
+    #obs = np.array([[[0.68890405, 0.07822049, 0.5780419 , 1., 0.5767162 ,
+    #    0.14886844, 0.65039325, 0.52042484]]]) 
+    #self.model(obs)
+    #print(self.model(obs))
+
     num_state_dims = np.shape(self._runtime._observation_spec)[1]
     inference = self._inference.get_concrete_function(input=tf.TensorSpec([1, 1, num_state_dims], tf.float32))
     self.model.save('./model', save_format='tf', include_optimizer=False, signatures=inference)
