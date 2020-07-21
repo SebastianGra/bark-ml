@@ -35,16 +35,15 @@ class CDQNRunner(TFARunner):
   
   @tf.function
   def _inference(self, input):
-    q_logits, _ = self.model.call(input)
+    q_logits, _ = self.q_model.call(input)
     q_probabilities = tf.nn.softmax(q_logits)
     q_values = tf.reduce_sum(self._agent._agent._support * q_probabilities, axis=-1)
     return q_values
 
   def _train(self):
-    self.model = self._agent._agent._q_network
+    self.q_model = self._agent._agent._q_network
     num_state_dims = np.shape(self._runtime._observation_spec)[1]
     inference = self._inference.get_concrete_function(input=tf.TensorSpec([1, 1, num_state_dims], tf.float32))
-    self.model.save('./model', save_format='tf', include_optimizer=False, signatures=inference)
 
     """Trains the agent as specified in the parameter file
     """
@@ -56,4 +55,5 @@ class CDQNRunner(TFARunner):
       self._agent._agent.train(experience)
       if global_iteration % self._params["ML"]["Runner"]["evaluate_every_n_steps"] == 0:
         self.evaluate()
+        self.q_model.save('./model', save_format='tf', include_optimizer=False, signatures=inference)
         self._agent.save()
