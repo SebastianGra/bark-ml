@@ -7,7 +7,7 @@ void NoOpDeallocator() {};
 class ModelLoader {
 public:
     ModelLoader();
-    std::vector<float> Evaluator(std::vector<float> neural_network_input, int actions_number);
+    std::vector<float> Evaluator(std::vector<float> neural_network_input, int num_actions);
 
 private:
     TF_Status* Status;

@@ -35,8 +35,10 @@ class CDQNRunner(TFARunner):
   
   @tf.function
   def _inference(self, input):
-      q_values, _ = self.model(input)
-      return q_values
+    q_logits, _ = self.model.call(input)
+    q_probabilities = tf.nn.softmax(q_logits)
+    q_values = tf.reduce_sum(self._agent._agent._support * q_probabilities, axis=-1)
+    return q_values
 
   def _train(self):
     self.model = self._agent._agent._q_network
