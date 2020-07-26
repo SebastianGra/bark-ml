@@ -54,8 +54,8 @@ git_repository(
 
 git_repository(
     name = "libtensorflow-RL-MCTS",
-    commit = "9b13b789405ad82d717fac0f1e15957510280beb",
-    remote = "https://github.com/wejdene14/libtensorflow-RL-MCTS",
+    commit = "84845b655f7bf6d3263dcddf465446edb192e21b",
+    remote = "https://github.com/steven-guo94/libtensorflow_so",
 )
 
 # External dependency: Google Flags; has Bazel build already.
