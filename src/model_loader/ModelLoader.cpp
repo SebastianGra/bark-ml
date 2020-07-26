@@ -7,11 +7,9 @@
 #include <numeric>
 #include <string.h>
 
-//using namespace std;
-
 void NoOpDeallocator(void* data, size_t a, void* b) {}
 
-ModelLoader::ModelLoader()
+ModelLoader::ModelLoader(const char* saved_model_dir)
     {
         //********* Read model
         Graph = TF_NewGraph();
@@ -19,7 +17,6 @@ ModelLoader::ModelLoader()
         TF_SessionOptions* SessionOpts = TF_NewSessionOptions();
         TF_Buffer* RunOpts = NULL;
         
-        saved_model_dir = "/home/vivienne/Praktikum/model/"; 
         tags = "serve"; 
         
         int ntags = 1; 
@@ -34,7 +31,6 @@ ModelLoader::ModelLoader()
     
 
         //********* Get input tensor
-        
         Input = (TF_Output*) malloc(sizeof(TF_Output) * NumInputs);
         t0 = {TF_GraphOperationByName(Graph, "serving_default_input"), 0};
 
@@ -48,7 +44,6 @@ ModelLoader::ModelLoader()
 
         
         //********* Get Output tensor
-        int NumOutputs = 1;
         Output = (TF_Output*) malloc(sizeof(TF_Output) * NumOutputs);
         t2 = {TF_GraphOperationByName(Graph, "StatefulPartitionedCall"), 0};
         
@@ -67,14 +62,11 @@ ModelLoader::ModelLoader()
 
     }
 
-std::vector<float> ModelLoader::Evaluator(std::vector<float> neural_network_input, int actions_number)
-    {
-        //std::vector<double> EvaluateModel(std::vector<double> neural_network_input) const = 0;
-
-        
-        int ndims = 2; 
+std::vector<float> ModelLoader::Evaluator(std::vector<float> neural_network_input, int num_actions)
+    {        
+        int ndims = 3; 
         int len = neural_network_input.size();
-        std::vector<std::int64_t> dims = {1, len};
+        std::vector<std::int64_t> dims = {1, 1, len};
         
         // ndata is total byte size of our data, not the length of the array
         int data_size = std::accumulate(dims.begin(), dims.end(), sizeof(float), std::multiplies<std::int64_t>{}); 
@@ -99,18 +91,9 @@ std::vector<float> ModelLoader::Evaluator(std::vector<float> neural_network_inpu
         else {
             std::cout << "%s" << TF_Message(Status) << std::endl;
         }
-        
-        //auto buff = TF_TensorData(OutputValues[0]);
-        //std::vector<float*> q_values = std::vector<float*>(TF_TensorData(OutputValues[0]));
-        
-        //auto values = static_cast<float*> (TF_TensorData(OutputValues[0]));
-        //std::vector<float> q_values(sizeof(values));
-        //memcpy(q_values.data(), &values, sizeof(values));
 
-        
         auto values = (float*) (TF_TensorData(OutputValues[0]));
-        int n = actions_number;
-        std::vector<float> q_values(values,values+n);
+        std::vector<float> q_values(values, values + num_actions);
 
         return q_values;
     }
