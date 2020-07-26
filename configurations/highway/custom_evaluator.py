@@ -1,10 +1,10 @@
 import numpy as np
-from bark.world.evaluation import \
+from bark.core.world.evaluation import \
   EvaluatorGoalReached, EvaluatorCollisionAgents, \
   EvaluatorStepCount, EvaluatorDrivableArea, EvaluatorCollisionEgoAgent
-from modules.runtime.commons.parameters import ParameterServer
-from bark.geometry import *
-from bark.models.dynamic import StateDefinition
+from bark.runtime.commons.parameters import ParameterServer
+from bark.core.geometry import *
+from bark.core.models.dynamic import StateDefinition
 
 from src.evaluators.goal_reached import GoalReached
 

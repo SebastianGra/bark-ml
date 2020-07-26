@@ -1,5 +1,5 @@
 import numpy as np
-from modules.runtime.runtime import Runtime
+from bark.runtime.runtime import Runtime
 
 class RuntimeRL(Runtime):
   """Runtime wrapper for reinforcement learning.

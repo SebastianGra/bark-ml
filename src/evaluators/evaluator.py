@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from modules.runtime.commons.parameters import ParameterServer
+from bark.runtime.commons.parameters import ParameterServer
 
 class StateEvaluator(ABC):
   """Evaluates the state of the environment

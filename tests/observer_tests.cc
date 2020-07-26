@@ -5,22 +5,23 @@
 
 
 #include "gtest/gtest.h"
-#include "modules/commons/params/params.hpp"
-#include "modules/geometry/geometry.hpp"
-#include "modules/commons/params/default_params.hpp"
+#include "bark/commons/params/params.hpp"
+#include "bark/geometry/geometry.hpp"
+//#include "bark/commons/params/default_params.hpp"
+#include "bark/commons/params/setter_params.hpp"
 #include "src/observers/nearest_observer.hpp"
-#include "modules/world/tests/make_test_world.hpp"
+#include "bark/world/tests/make_test_world.hpp"
 
 TEST(observes, nearest_observer) {
   // ugly imports
-  using namespace modules::models::dynamic;
-  using namespace modules::models::execution;
-  using namespace modules::commons;
-  using namespace modules::models::behavior;
-  using namespace modules::models::dynamic;
-  using namespace modules::world;
-  using namespace modules::geometry;
-  using namespace modules::world::tests;
+  using namespace bark::models::dynamic;
+  using namespace bark::models::execution;
+  using namespace bark::commons;
+  using namespace bark::models::behavior;
+  using namespace bark::models::dynamic;
+  using namespace bark::world;
+  using namespace bark::geometry;
+  using namespace bark::world::tests;
 
   // observer
   using observers::NearestObserver;
@@ -54,7 +55,7 @@ TEST(observes, nearest_observer) {
     std::make_shared<ObservedWorld>(observed_world);
 
   // Observer
-  ParamsPtr params = std::make_shared<DefaultParams>();
+  ParamsPtr params = std::make_shared<SetterParams>();
   NearestObserver observer(params);
 
   // Observe

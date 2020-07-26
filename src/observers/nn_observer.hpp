@@ -9,32 +9,32 @@
 #include <Eigen/Dense>
 
 
-#include "modules/commons/params/params.hpp"
-#include "modules/world/world.hpp"
-#include "modules/world/observed_world.hpp"
-#include "modules/world/goal_definition/goal_definition_state_limits_frenet.hpp"
-#include "modules/models/dynamic/dynamic_model.hpp"
+#include "bark/commons/params/params.hpp"
+#include "bark/world/world.hpp"
+#include "bark/world/observed_world.hpp"
+#include "bark/world/goal_definition/goal_definition_state_limits_frenet.hpp"
+#include "bark/models/dynamic/dynamic_model.hpp"
 #include "src/commons/spaces.hpp"
 #include "src/commons/commons.hpp"
-#include "modules/geometry/angle.hpp"
+#include "bark/geometry/angle.hpp"
 
 namespace observers {
-using modules::commons::ParamsPtr;
-using modules::world::Agent;
+using bark::commons::ParamsPtr;
+using bark::world::Agent;
 using spaces::Box;
 using commons::Norm;
 using spaces::Matrix_t;
-using modules::world::AgentMap;
-using modules::world::AgentPtr;
-using modules::world::WorldPtr;
-using modules::world::goal_definition::GoalDefinitionStateLimitsFrenet;
-using modules::world::ObservedWorldPtr;
-using modules::geometry::Point2d;
-using modules::geometry::Line;
-using modules::geometry::Distance;
-using modules::models::dynamic::StateDefinition;
+using bark::world::AgentMap;
+using bark::world::AgentPtr;
+using bark::world::WorldPtr;
+using bark::world::goal_definition::GoalDefinitionStateLimitsFrenet;
+using bark::world::ObservedWorldPtr;
+using bark::geometry::Point2d;
+using bark::geometry::Line;
+using bark::geometry::Distance;
+using bark::models::dynamic::StateDefinition;
 using ObservedState = Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>; 
-using modules::commons::transformation::FrenetPosition;
+using bark::commons::transformation::FrenetPosition;
 using State = Eigen::Matrix<float, Eigen::Dynamic, 1>;
 
 
@@ -225,7 +225,7 @@ Box<float> NearestStateObserver::ObservationSpace() const {
 
     /*
     State StateObserver::_select_state_by_index(const State State, StateDefinition StateDefinition){
-    modules::models::dynamic::StateDefinition
+    bark::models::dynamic::StateDefinition
     state(StateDefinition::X_POSITION),
                              StateDefinition::Y_POSITION,
                              StateDefinition::THETA_POSITION,

@@ -4,9 +4,9 @@ import numpy as np
 import math
 import operator
 
-from bark.models.dynamic import StateDefinition
-from bark.world import ObservedWorld
-from modules.runtime.commons.parameters import ParameterServer
+from bark.core.models.dynamic import StateDefinition
+from bark.core.world import ObservedWorld
+from bark.runtime.commons.parameters import ParameterServer
 from src.observers.observer import StateObserver
 
 

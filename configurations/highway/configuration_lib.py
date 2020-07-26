@@ -7,17 +7,17 @@ import matplotlib.gridspec as gridspec
 from tf_agents.environments import tf_py_environment
 from tf_agents.environments import parallel_py_environment
 
-from modules.runtime.scenario.scenario_generation.uniform_vehicle_distribution \
+from bark.runtime.scenario.scenario_generation.uniform_vehicle_distribution \
   import UniformVehicleDistribution
-from modules.runtime.scenario.scenario_generation.deterministic \
+from bark.runtime.scenario.scenario_generation.deterministic \
   import DeterministicScenarioGeneration
-from modules.runtime.scenario.scenario_generation.configurable_scenario_generation import \
+from bark.runtime.scenario.scenario_generation.configurable_scenario_generation import \
   ConfigurableScenarioGeneration
 
-from modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.viewer.matplotlib_viewer import MPViewer
-from modules.runtime.viewer.video_renderer import VideoRenderer
-from modules.runtime.viewer.pygame_viewer import PygameViewer
+from bark.runtime.commons.parameters import ParameterServer
+from bark.runtime.viewer.matplotlib_viewer import MPViewer
+from bark.runtime.viewer.video_renderer import VideoRenderer
+from bark.runtime.viewer.pygame_viewer import PygameViewer
 
 
 from src.rl_runtime import RuntimeRL

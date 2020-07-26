@@ -13,7 +13,7 @@
 #include "pybind11/eigen.h"
 #include "boost/variant.hpp"
 
-#include "modules/commons/params/params.hpp"
+#include "bark/commons/params/params.hpp"
 #include "src/observers/nearest_observer_new.hpp"
 //#include "src/observers/nn_observer.hpp"
 #include "src/commons/spaces.hpp"
@@ -21,7 +21,7 @@
 PYBIND11_DECLARE_HOLDER_TYPE(T, std::shared_ptr<T>);
 
 namespace py = pybind11;
-using modules::commons::ParamsPtr;
+using bark::commons::ParamsPtr;
 using observers::NearestObserver;
 //using observers::StateObserver;
 //using observers::NearestStateObserver;

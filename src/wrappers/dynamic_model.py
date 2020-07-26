@@ -2,9 +2,9 @@
 import numpy as np
 import itertools
 from src.commons.py_spaces import Discrete, BoundedContinuous
-from bark.models.behavior import DynamicBehaviorModel
-from bark.models.dynamic import SingleTrackModel, TripleIntegratorModel
-from modules.runtime.commons.parameters import ParameterServer
+from bark.core.models.behavior import BehaviorDynamicModel
+from bark.core.models.dynamic import SingleTrackModel, TripleIntegratorModel
+from bark.runtime.commons.parameters import ParameterServer
 from src.wrappers.action_wrapper import ActionWrapper
 
 class DynamicModel(ActionWrapper):
@@ -32,7 +32,7 @@ class DynamicModel(ActionWrapper):
     self._behavior_models = []
     self._controlled_agents = agents_to_act
     for agent_id in agents_to_act:
-      self._behavior_models.append(DynamicBehaviorModel(self._dynamic_model,
+      self._behavior_models.append(BehaviorDynamicModel(self._dynamic_model,
                                                         self._params))
       if agent_id in world.agents:
         actions = np.zeros(shape=(self._control_inputs), dtype=np.float32)

@@ -5,31 +5,31 @@
 
 
 #include "gtest/gtest.h"
-#include "modules/commons/params/params.hpp"
-#include "modules/geometry/geometry.hpp"
-#include "modules/commons/params/default_params.hpp"
-#include "modules/commons/params/setter_params.hpp"
+#include "bark/commons/params/params.hpp"
+#include "bark/geometry/geometry.hpp"
+//#include "bark/commons/params/default_params.hpp"
+#include "bark/commons/params/setter_params.hpp"
 //#include "src/observers/nearest_observer.hpp"
 #include "src/observers/nearest_observer_new.hpp"
 //#include "src/observers/nn_observer.hpp"
-#include "modules/world/tests/make_test_world.hpp"
+#include "bark/world/tests/make_test_world.hpp"
 
-#include "modules/geometry/commons.hpp"
-#include "modules/models/behavior/constant_velocity/constant_velocity.hpp"
-#include "modules/models/behavior/idm/idm_classic.hpp"
-#include "modules/models/dynamic/single_track.hpp"
-#include "modules/models/execution/interpolation/interpolate.hpp"
+#include "bark/geometry/commons.hpp"
+#include "bark/models/behavior/constant_velocity/constant_velocity.hpp"
+#include "bark/models/behavior/idm/idm_classic.hpp"
+#include "bark/models/dynamic/single_track.hpp"
+#include "bark/models/execution/interpolation/interpolate.hpp"
 
 
 
-using namespace modules::models::dynamic;
-using namespace modules::models::execution;
-using namespace modules::commons;
-using namespace modules::models::behavior;
-using namespace modules::world::map;
-using namespace modules::world;
-using namespace modules::geometry;
-using namespace modules::world::tests;
+using namespace bark::models::dynamic;
+using namespace bark::models::execution;
+using namespace bark::commons;
+using namespace bark::models::behavior;
+using namespace bark::world::map;
+using namespace bark::world;
+using namespace bark::geometry;
+using namespace bark::world::tests;
 
 // observer
 using observers::NearestObserver;

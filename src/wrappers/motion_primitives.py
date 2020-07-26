@@ -2,10 +2,10 @@
 import numpy as np
 
 from src.commons.py_spaces import Discrete, BoundedContinuous
-from bark.models.behavior import BehaviorMotionPrimitives, BehaviorMPMacroActions, \
+from bark.core.models.behavior import BehaviorMotionPrimitives, BehaviorMPMacroActions, \
                               BehaviorMacroActionsFromParamServer
-from bark.models.dynamic import SingleTrackModel
-from modules.runtime.commons.parameters import ParameterServer
+from bark.core.models.dynamic import SingleTrackModel
+from bark.runtime.commons.parameters import ParameterServer
 from src.wrappers.action_wrapper import ActionWrapper
 
 

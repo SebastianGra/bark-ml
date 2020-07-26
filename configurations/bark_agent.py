@@ -1,9 +1,9 @@
 import numpy as np
-from bark.models.behavior import BehaviorModel, DynamicBehaviorModel
-from bark.models.dynamic import SingleTrackModel
-from modules.runtime.commons.parameters import ParameterServer
+from bark.core.models.behavior import BehaviorModel, BehaviorDynamicModel
+from bark.core.models.dynamic import SingleTrackModel
+from bark.runtime.commons.parameters import ParameterServer
 from configurations.base_configuration import BaseConfiguration
-from bark.world import World, ObservedWorld
+from bark.core.world import World, ObservedWorld
 
 # include all configurations
 from configurations.highway.configuration import HighwayConfiguration
@@ -16,7 +16,7 @@ class BARKMLBehaviorModel(BehaviorModel):
                configuration=None):
     BehaviorModel.__init__(self, configuration._params)
     self._configuration = configuration
-    self._dynamic_behavior_model = DynamicBehaviorModel(
+    self._dynamic_behavior_model = BehaviorDynamicModel(
       self._configuration._behavior_model._dynamic_model,
       configuration._params)
 
@@ -54,7 +54,7 @@ class BARKMLBehaviorModel(BehaviorModel):
     scenario_generation["MapFilename"] = base_dir + "/" + map_filename
     params["BaseDir"] = base_dir
     sdict['_configuration'] = HighwayConfiguration(params)
-    sdict['_dynamic_behavior_model'] = DynamicBehaviorModel(
+    sdict['_dynamic_behavior_model'] = BehaviorDynamicModel(
       sdict['_configuration']._behavior_model._dynamic_model,
       sdict['_configuration']._params)
     BehaviorModel.__init__(self, sdict['_configuration']._params)

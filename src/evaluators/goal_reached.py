@@ -1,7 +1,7 @@
-from bark.world.evaluation import \
+from bark.core.world.evaluation import \
   EvaluatorGoalReached, EvaluatorCollisionAgents, \
   EvaluatorStepCount
-from modules.runtime.commons.parameters import ParameterServer
+from bark.runtime.commons.parameters import ParameterServer
 
 from src.evaluators.evaluator import StateEvaluator
 

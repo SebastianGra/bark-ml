@@ -3,9 +3,9 @@ py_library(
     srcs = ["nearest_state_observer.py",
             "simple_observer.py",
             "observer.py"],
-    data = ["@bark_project//python:bark.so"],
+    data = ["@bark_project//bark:generate_core"],
     imports = ["../external/bark_project/python/"],
-    deps = ["@bark_project//modules/runtime:runtime"],
+    deps = ["@bark_project//bark/runtime:runtime"],
     visibility = ["//visibility:public"],
 )
 
@@ -15,7 +15,7 @@ cc_library(
     "nearest_observer_new.hpp",
   ],
   deps = [
-    "@bark_project//modules/world:world",
+    "@bark_project//bark/world:world",
     "//src/commons:spaces",
     "//src/commons:commons"
   ],

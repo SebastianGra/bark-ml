@@ -5,7 +5,7 @@ import tensorflow as tf
 import numpy as np
 tf.compat.v1.enable_v2_behavior()
 
-from modules.runtime.commons.parameters import ParameterServer
+from bark.runtime.commons.parameters import ParameterServer
 
 from tf_agents.metrics import tf_metrics
 from tf_agents.eval import metric_utils

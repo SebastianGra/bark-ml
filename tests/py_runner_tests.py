@@ -10,12 +10,12 @@ import unittest
 import tensorflow as tf
 from tf_agents.environments import tf_py_environment
 
-from modules.runtime.scenario.scenario_generation.uniform_vehicle_distribution \
+from bark.runtime.scenario.scenario_generation.uniform_vehicle_distribution \
   import UniformVehicleDistribution
-from modules.runtime.scenario.scenario_generation.deterministic \
+from bark.runtime.scenario.scenario_generation.deterministic \
   import DeterministicScenarioGeneration
-from modules.runtime.commons.parameters import ParameterServer
-from modules.runtime.viewer.matplotlib_viewer import MPViewer
+from bark.runtime.commons.parameters import ParameterServer
+from bark.runtime.viewer.matplotlib_viewer import MPViewer
 
 from src.rl_runtime import RuntimeRL
 from src.observers.nearest_state_observer import ClosestAgentsObserver

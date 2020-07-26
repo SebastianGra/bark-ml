@@ -3,10 +3,10 @@
 import numpy as np
 from abc import ABC, abstractmethod
 
-from bark.models.behavior import BehaviorMotionPrimitives, \
-  DynamicBehaviorModel
-from bark.models.dynamic import SingleTrackModel
-from modules.runtime.commons.parameters import ParameterServer
+from bark.core.models.behavior import BehaviorMotionPrimitives, \
+  BehaviorDynamicModel
+from bark.core.models.dynamic import SingleTrackModel
+from bark.runtime.commons.parameters import ParameterServer
 
 
 class ActionWrapper(ABC):
