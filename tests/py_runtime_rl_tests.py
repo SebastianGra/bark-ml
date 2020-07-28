@@ -101,7 +101,7 @@ class PyRuntimeRLTests(unittest.TestCase):
                           scenario_generator=scenario_generation,
                           render=False)
 
-    params.save(filename="./default_params_runtime_rl_motion_primitives.json")
+    params.Save(filename="./default_params_runtime_rl_motion_primitives.json")
 
     for _ in range(0, 3):
       runtimerl.reset()

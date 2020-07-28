@@ -32,8 +32,7 @@ class DynamicModel(ActionWrapper):
     self._behavior_models = []
     self._controlled_agents = agents_to_act
     for agent_id in agents_to_act:
-      self._behavior_models.append(BehaviorDynamicModel(self._dynamic_model,
-                                                        self._params))
+      self._behavior_models.append(BehaviorDynamicModel(self._params))
       if agent_id in world.agents:
         actions = np.zeros(shape=(self._control_inputs), dtype=np.float32)
         self._behavior_models[-1].SetLastAction(actions)

@@ -66,7 +66,7 @@ class SimpleObserver(StateObserver):
                  self._velocity_range)
     return agent_state
 
-  def reset(self, world, controlled_agent_ids):
+  def reset(self, world):
     return world
 
   @property

@@ -23,7 +23,9 @@ class MotionPrimitives(ActionWrapper):
 
   def get_motion_primitive_model(self, params, model_type):
     if model_type == "BehaviorMPMacroActions":
+      params["BehaviorMPMacroActions"]["CheckValidityInPlan"] = False
       model = BehaviorMacroActionsFromParamServer(params)
+      print(model.params)
     elif model_type == "BehaviorMotionPrimtives":
       control_inputs = params["DynamicInputs",
         "Motion primitives available as discrete actions", \
@@ -60,4 +62,4 @@ class MotionPrimitives(ActionWrapper):
   def action_space(self):
     """see base class
     """
-    return Discrete(self._behavior_model.GetNumMotionPrimitives(None))
+    return Discrete(len(self._behavior_model.GetMotionPrimitives()))
