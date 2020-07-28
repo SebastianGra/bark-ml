@@ -290,5 +290,8 @@
     },
     "World": {
       "remove_agents_out_of_map" : true
+    },
+    "BehaviorMPMacroActions":{
+      "CheckValidityInPlan" : false
     }
   }
