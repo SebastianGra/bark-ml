@@ -54,7 +54,7 @@ git_repository(
 
 git_repository(
     name = "libtensorflow-RL-MCTS",
-    commit = "d3200fb49d94cc6acfe6ecce3c1dc4b5cb7d342d",
+    commit = "31adfc2112ce41b81574b6f44192ec47f0853fbc",
     remote = "https://github.com/steven-guo94/libtensorflow_so",
 )
 
