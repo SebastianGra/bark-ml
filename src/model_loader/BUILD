@@ -5,6 +5,6 @@ cc_library(
     srcs=["ModelLoader.cpp"],
     hdrs=["ModelLoader.hpp"],
     copts = ["-Iexternal/libtensorflow-RL-MCTS"],
-    deps= ["@libtensorflow-RL-MCTS//libtensorflow:tensorflowlib"],
+    deps= ["@libtensorflow-RL-MCTS//libtensorflow:tensorflow_include"],
     visibility = ["//visibility:public"],
 )
