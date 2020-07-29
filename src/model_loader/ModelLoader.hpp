@@ -10,7 +10,7 @@
 #include <vector>
 
 
-void NoOpDeallocator() {};
+inline void NoOpDeallocator() {};
 
 class ModelLoader {
 public:
