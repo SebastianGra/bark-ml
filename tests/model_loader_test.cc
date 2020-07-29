@@ -11,7 +11,7 @@
 
 int main()
 {
-    ModelLoader model("/model");
+    ModelLoader model("/home/model/");
 
     std::random_device rd;
     std::default_random_engine generator(rd());

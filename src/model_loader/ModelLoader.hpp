@@ -1,8 +1,16 @@
+// Copyright (c) 2020 fortiss GmbH
+//
+// This work is licensed under the terms of the MIT license.
+// For a copy, see <https://opensource.org/licenses/MIT>.
+
+#ifndef SRC_MODEL_LOADER_MODEL_LOADER_HPP_
+#define SRC_MODEL_LOADER_MODEL_LOADER_HPP_
+
 #include "libtensorflow/include/tensorflow/c/c_api.h"
 #include <vector>
 
 
-void NoOpDeallocator() {};
+inline void NoOpDeallocator() {};
 
 class ModelLoader {
 public:
@@ -23,3 +31,5 @@ private:
     TF_Tensor** InputValues;
     TF_Tensor** OutputValues;
 };
+
+#endif // SRC_MODEL_LOADER_MODEL_LOADER_HPP_
