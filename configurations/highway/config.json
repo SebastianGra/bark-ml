@@ -8,7 +8,7 @@
           "NumScenarios": 100,
           "NumSets": 1,
           "ConfigurableScenarioGeneration": {
-              "MapFilename": "maps/city_highway_straight.xodr",
+              "MapFilename": "tests/data/city_highway_straight.xodr",
               "RandomSeed": 2000,
               "SinksSources": [
                   {
