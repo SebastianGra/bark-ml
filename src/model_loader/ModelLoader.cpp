@@ -93,10 +93,9 @@ std::vector<float> ModelLoader::Evaluator(std::vector<float> neural_network_inpu
         }
 
         //Free memory
-        TF_DeleteGraph(Graph);
+        TF_DeleteTensor(InputValues);
         TF_DeleteSession(Session, Status);
         TF_DeleteSessionOptions(SessionOpts);
-        TF_DeleteStatus(Status);
 
         auto values = (float*) (TF_TensorData(OutputValues[0]));
         std::vector<float> q_values(values, values + num_actions);
