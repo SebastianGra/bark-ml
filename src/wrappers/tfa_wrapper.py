@@ -20,7 +20,7 @@ class TFAWrapper(py_environment.PyEnvironment):
     print(self._env.action_space.low,self._env.action_space.high, self._env.action_space.shape)
     self._action_spec = array_spec.BoundedArraySpec(
       shape=self._env.action_space.shape,
-      dtype=np.int32,
+      dtype=np.float32,
       minimum=self._env.action_space.low,
       maximum=self._env.action_space.high,
       name='action')

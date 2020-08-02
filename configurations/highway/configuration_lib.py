@@ -67,9 +67,9 @@ class HighwayConfiguration(BaseConfiguration):
     #self._observer = NearestStateObserver(self._params)
 
     # USE THIS IF THE ACTION SPACE IS DISCRETE (WITH DQN-Agent)
-    self._behavior_model = MotionPrimitives(params=self._params)
+    #self._behavior_model = MotionPrimitives(params=self._params)
     # USE THIS IF THE ACTION SPACE IS CONTINUOUS (WITH SAC-Agent)
-    # self._behavior_model = DynamicModel(params=self._params)
+    self._behavior_model = DynamicModel(params=self._params)
 
     self._evaluator = CustomEvaluator(params=self._params)
     sim_step_time = 0.2
@@ -103,13 +103,13 @@ class HighwayConfiguration(BaseConfiguration):
     #                          self._agent,
     #                          params=self._params,
     #                          unwrapped_runtime=self._runtime)                          
-    # self._agent = SACAgent(tfa_env, params=self._params)
-    # self._runner = SACRunner(tfa_env,
+    self._agent = SACAgent(tfa_env, params=self._params)
+    self._runner = SACRunner(tfa_env,
+                             self._agent,
+                             params=self._params,
+                             unwrapped_runtime=self._runtime)
+    #self._agent = CDQNAgent(tfa_env, params=self._params)
+    #self._runner = CDQNRunner(tfa_env,
     #                          self._agent,
     #                          params=self._params,
-    #                          unwrapped_runtime=self._runtime)
-    self._agent = CDQNAgent(tfa_env, params=self._params)
-    self._runner = CDQNRunner(tfa_env,
-                              self._agent,
-                              params=self._params,
-                              unwrapped_runtime=self._runtime)   
+    #                          unwrapped_runtime=self._runtime)   
