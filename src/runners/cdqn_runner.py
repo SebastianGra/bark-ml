@@ -44,7 +44,8 @@ class CDQNRunner(TFARunner):
     self.q_model = self._agent._agent._q_network
     num_state_dims = np.shape(self._runtime._observation_spec)[1]
     inference = self._inference.get_concrete_function(input=tf.TensorSpec([1, 1, num_state_dims], tf.float32))
-
+    self.q_model.save('./model', save_format='tf', include_optimizer=False, signatures=inference)
+    
     """Trains the agent as specified in the parameter file
     """
     iterator = iter(self._agent._dataset)
