@@ -49,9 +49,9 @@ class NearestObserver {
     explicit NearestObserver(const ParamsPtr& params) :
       params_(params),
       world_x_min_ (0.0),
-      world_x_max_ (100.0),
+      world_x_max_ (5500.0),
       world_y_min_ (0.0),
-      world_y_max_ (100.0),
+      world_y_max_ (5500.0),
       state_size_(4) {  //state size 4 fixed (X_Pos, Y_Pos, Theta, Vel)
         nearest_agent_num_ = params_->GetInt("ML::Observer::n_nearest_agents", "Nearest agents number", 4);
         min_theta_ = params_->GetReal("ML::Observer::min_theta", "", -3.14159);  //[rad]
